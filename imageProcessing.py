@@ -9,8 +9,11 @@ class ImageProcessing:
     def GaussianBlur(self, image):
         return cv.GaussianBlur(image,(5,5),0)
 
+    def Billateral(self, image):
+        return cv.bilateralFilter(image, 8,50,50)
+
     def Canny(self, image):
-        return cv.Canny(image, 135, 255)
+        return cv.Canny(image, 145, 255)
 
     def Threshold(self, image, level):
         return cv.threshold(image, level, 255, 1)
@@ -48,11 +51,12 @@ class ImageProcessing:
 
             proportion = float(w) / h
 
-            if proportion > 2.6 and proportion < 4:
+            if proportion > 2.83 and proportion < 3.24:
                 area = cv.contourArea(currentContour)
                 arrayOfAreas.append(area)
                 print(frame.name + "Area: " + str(area) + "; Proportion: " + str(proportion))
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,255,0),1)
+                cv.putText(backtorgb, str(proportion), (x,y), cv.FONT_HERSHEY_SIMPLEX, 1, (255,255,0),2)
                 arrayOfContours.append(currentContour)
 
             if proportion > 0.59 and proportion < 0.82:
