@@ -23,7 +23,8 @@ imgGol17 = cv.imread("C:/Users/oluis/Desktop/TCC/tutorias/plate_recognition/plat
 imgGol18 = cv.imread("C:/Users/oluis/Desktop/TCC/tutorias/plate_recognition/plates/gol18.jpg", cv.IMREAD_GRAYSCALE)
 
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
-arrayOfCarsInitial = np.array([imgGol4, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
+# arrayOfCarsInitial = np.array([imgGol2, imgGol4, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
+arrayOfCarsInitial = np.array([imgGol7, imgGol9])
 
 cap = cv.VideoCapture('C:/Users/oluis/Desktop/TCC/tutorias/plate_recognition/plates/gol_video.mp4')
 
@@ -39,35 +40,37 @@ i = 0
 # imgProcessing.FindPossiblePlates(img)
 # img.showAllPlates()
 
-# for car in arrayOfCarsInitial:
-#     i = i + 1
-#     img = Frame(car, 'gol' + str(i), None, None)
-
-#     imgProcessing = ImageProcessing()
-
-#     img.CropImage(500, 1500, 400, 1500)
-#     # img.image = imgProcessing.GaussianBlur(img.image)
-#     img.image = imgProcessing.Billateral(img.image)
-#     img.image = imgProcessing.Canny(img.image)
-#     imgProcessing.FindPossiblePlates(img)
-
-while(cap.isOpened()):
-    ret, frame = cap.read()
+for car in arrayOfCarsInitial:
     i = i + 1
-    if i % 100 == 0:
-        if frame is not None:
-            img = Frame(frame, 'gol' + str(i), None, None)
+    img = Frame(car, 'gol' + str(i), None, None)
 
-            imgProcessing = ImageProcessing()
+    imgProcessing = ImageProcessing()
 
-            img.CropImage(500, 1500, 400, 1500)
-            # img.image = imgProcessing.GaussianBlur(img.image)
-            img.image = imgProcessing.Billateral(img.image)
-            img.image = imgProcessing.Canny(img.image)
-            imgProcessing.FindPossiblePlates(img)
-        if i == 400:
-            cap.release()
+    img.CropImage(500, 1500, 400, 1500)
+    # img.image = imgProcessing.GaussianBlur(img.image)
+    img.image = imgProcessing.Billateral(img.image)
+    img.image = imgProcessing.Canny(img.image)
+    imgProcessing.FindPossiblePlates(img)
+    img.CropAllPlatesBorders()
+    img.showAllPlates()
 
-cap.release()
+# while(cap.isOpened()):
+#     ret, frame = cap.read()
+#     i = i + 1
+#     if i % 100 == 0:
+#         if frame is not None:
+#             img = Frame(frame, 'gol' + str(i), None, None)
+
+#             imgProcessing = ImageProcessing()
+
+#             img.CropImage(500, 1500, 400, 1500)
+#             # img.image = imgProcessing.GaussianBlur(img.image)
+#             img.image = imgProcessing.Billateral(img.image)
+#             img.image = imgProcessing.Canny(img.image)
+#             imgProcessing.FindPossiblePlates(img)
+#         if i == 400:
+#             cap.release()
+
+# cap.release()
 
 cv.waitKey(0)
