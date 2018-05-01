@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+from frame import Frame
 
 class ImageProcessing:
 
@@ -20,7 +21,7 @@ class ImageProcessing:
 
     def FindPossiblePlates(self, frame):
 
-        cv.imshow('inicial ' + frame.name, frame.image)
+        # cv.imshow('inicial ' + frame.name, frame.image)
         arrayOfPlates = []
 
         # procura os contornos
@@ -51,10 +52,10 @@ class ImageProcessing:
 
             proportion = float(w) / h
 
-            if proportion > 2.83 and proportion < 3.24:
+            if proportion > 2.83 and proportion < 3.20:
                 area = cv.contourArea(currentContour)
                 arrayOfAreas.append(area)
-                print(frame.name + "Area: " + str(area) + "; Proportion: " + str(proportion))
+                print(frame.name + " Area: " + str(area) + "; Proportion: " + str(proportion))
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,255,0),1)
                 cv.putText(backtorgb, str(proportion), (x,y), cv.FONT_HERSHEY_SIMPLEX, 1, (255,255,0),2)
                 arrayOfContours.append(currentContour)
@@ -63,6 +64,7 @@ class ImageProcessing:
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
             
         areaMedia = np.mean(arrayOfAreas)
+        print('media ' + frame.name + ": " + str(areaMedia))
 
         for contour in arrayOfContours:
             areaFromContour = cv.contourArea(contour)
@@ -71,8 +73,8 @@ class ImageProcessing:
                 print('passou ' + frame.name + ': ' + str(areaFromContour))
                 x,y,w,h = cv.boundingRect(contour)
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
-                arrayOfPlates.append(frame.originalImage[y:y+h - 5, x:x+w - 5])
-
+                possiblePlate = Frame(frame.originalImage[y:y+h, x:x+w], frame.name, None, None)
+                arrayOfPlates.append(possiblePlate)
+            
         frame.arrayOfPlates = arrayOfPlates
-        print('media' + frame.name + ": " + str(np.median(arrayOfAreas)))
         cv.imshow('img com contornos media' + frame.name, backtorgb)
