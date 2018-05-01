@@ -26,10 +26,10 @@ imgGol17 = cv.imread("../../images/ol17.jpg", cv.IMREAD_GRAYSCALE)
 imgGol18 = cv.imread("../../images/gol18.jpg", cv.IMREAD_GRAYSCALE)
 
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
-# arrayOfCarsInitial = np.array([imgGol2, imgGol4, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
-arrayOfCarsInitial = np.array([imgGol7, imgGol9])
+arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
+# arrayOfCarsInitial = np.array([imgGol2])
 
-cap = cv.VideoCapture('../../images/gol_video.mp4')
+# cap = cv.VideoCapture('../../images/gol_video.mp4')
 
 
 #cam = Camera()
@@ -63,7 +63,7 @@ for car in arrayOfCarsInitial:
     img.image = imgProcessing.Canny(img.image)
     imgProcessing.FindPossiblePlates(img)
     img.CropAllPlatesBorders()
-    img.showAllPlates()
+    img.showAllPlatesThreshold()
 
 # while(cap.isOpened()):
 #     ret, frame = cap.read()

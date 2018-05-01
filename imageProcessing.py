@@ -70,11 +70,19 @@ class ImageProcessing:
             areaFromContour = cv.contourArea(contour)
 
             if areaFromContour >= areaMedia:
-                print('passou ' + frame.name + ': ' + str(areaFromContour))
                 x,y,w,h = cv.boundingRect(contour)
-                cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
-                possiblePlate = Frame(frame.originalImage[y:y+h, x:x+w], frame.name, None, None)
-                arrayOfPlates.append(possiblePlate)
+                possiblePlate = Frame(frame.originalImage[y:y+h, x:x+w], frame.name, None, None)        
+                height, width = possiblePlate.image.shape
+
+                calculatedArea = height * width
+
+                if calculatedArea > 760:
+                    print('passou ' + frame.name + ': ' + str(areaFromContour))
+                    print('height: ' + str(height) + '; width: ' + str(width))
+                
+                    cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
+                    arrayOfPlates.append(possiblePlate)
+                
             
         frame.arrayOfPlates = arrayOfPlates
         cv.imshow('img com contornos media' + frame.name, backtorgb)
