@@ -54,11 +54,10 @@ class Frame:
 
         y2New = int(np.ceil(y * 0.31))
         x2New = int(np.ceil(x * 0.05))
-        
+
         plate.image = plate.image[y2New:y1New, x2New:x1New]
         return plate
 
     def CropAllPlatesBorders(self):
         for plate in self.arrayOfPlates:
            plate = self.CropPlateBorders(plate)
-
