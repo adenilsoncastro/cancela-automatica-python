@@ -5,21 +5,22 @@ import cv2 as cv
 import sys
 
 class OcrThread(Thread):
-    def __init__(self):
+    def __init__(self, frame, result_queue):
       Thread.__init__(self)
+      self.frame = frame
+      self.result_queue = result_queue
 
-    def run(self, frame, result_queue):
+    def run(self):
       try:
         result = []
-        result.append("../../images/" + frame.name)
-        result.append(ocr.image_to_string(Image.fromarray(frame.image)))
-        result_queue.put(result)
-        print("ocr image processed: " + frame.name)
+        result.append("../../images/" + self.frame.name)
+        result.append(ocr.image_to_string(Image.fromarray(self.frame.image)))
+        self.result_queue.put(result)
+        print("ocr image processed: " + self.frame.name)
       except:
         print("Error:", sys.exc_info()[0])
         raise
 
-
     def create_ocr_thread(self, frame, result_queue):
-        ocr = OcrThread()
+        ocr = OcrThread(frame, result_queue)
         ocr.run(frame, result_queue)

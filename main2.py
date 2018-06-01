@@ -23,7 +23,6 @@ def image_name():
 
 def handle_images():
     already_processed = []
-    ocr = OcrThread()
     while True:
         if os.listdir("../../images") == []:
             print("Folder images is empty")
@@ -33,24 +32,33 @@ def handle_images():
             for file in os.listdir("../../images"):
                 if not file in already_processed:
                     try:
-                        print("start processing image: " + file)
+                        print("started processing image: " + file)
                         imagem = cv.imread("../../images/" + file, cv.IMREAD_GRAYSCALE)
-                        imgProcessing = ImageProcessing()
-                        img = Frame(imagem, file, None, None)
-                        img.image = imgProcessing.Billateral(img.image)
-                        img.image = imgProcessing.Canny(img.image)
-                        imgProcessing.FindPossiblePlates(img)
-                        img.CropAllPlatesBorders()
-                        if len(img.arrayOfPlates) > 1:
-                            for plate in enumerate(img.arrayOfPlates):
-                                ocr.create_ocr_thread(plate[1], result_ocr)
+                        if imagem is not None:
+                            imgProcessing = ImageProcessing()
+                            img = Frame(imagem, file, None, None)
+                            img.image = imgProcessing.Billateral(img.image)
+                            img.image = imgProcessing.Canny(img.image)
+                            imgProcessing.FindPossiblePlates(img)
+                            img.CropAllPlatesBorders()
+                            if len(img.arrayOfPlates) > 0:
+                                for plate in enumerate(img.arrayOfPlates):
+                                    ocr = OcrThread(plate[1], result_ocr)
+                                    ocr.start()
+                            else:
+                                result_ocr.put(["../../images/" + file, ""])
+                                print("Image: " + file + " Possible plates found: " + str(len(img.arrayOfPlates)))
+                            already_processed.append(file)
                         else:
-                            result_ocr.put(["../../images/" + file, ""])
-                        already_processed.append(file)
-                        time.sleep(.100)
+                            print("Error reading image " + file)
+                            time.sleep(.100)
                     except:
-                        print("Error:", sys.exc_info()[0])
-                        raise
+                        print("Error: ", sys.exc_info()[0])
+
+def open_gate():
+    gpio.output(21, gpio.HIGH)
+    time.sleep(1)
+    gpio.output(21, gpio.LOW)
 
 t = threading.Thread(target=handle_images)
 t.start()
@@ -62,10 +70,8 @@ while True:
         result = result_ocr.get_nowait()
         print("Image returned: " + result[0])
         print("Image result: " + result[1])
-        if not result[1] == "":            
-            gpio.output(21, gpio.HIGH)
-            time.sleep(1)
-            gpio.output(21, gpio.LOW)
+        if not result[1] == "":
+            open_gate()
         if not cam.remove(result[0]) == 0:
             print("An error ocurred when removing image " + result[0])
     else:
