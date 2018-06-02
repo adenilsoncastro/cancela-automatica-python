@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+from PIL import Image
 
 class Frame:
     def __init__(self, image, name, time, arrayOfPlates):
@@ -34,6 +35,8 @@ class Frame:
             cv.imshow(self.name + "_threshold: " + str(i), plate.image)
             cv.imwrite(self.name + str(i) + '_threshold.png', plate.image)
             print(self.name + ": " + str(i) + str(plate.shape()))
+            # im = Image.fromarray(np.uint8(plate.image))
+            # print(im.info['dpi'])
 
     def showShapeOfPlates(self):
         i = 0

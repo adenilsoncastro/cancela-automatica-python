@@ -23,6 +23,9 @@ class ImageProcessing:
 
         # cv.imshow('inicial ' + frame.name, frame.image)
         arrayOfPlates = []
+        arrayOfAreas = []
+        arrayOfContours = []
+        arrayOfShapes = []
 
         # procura os contornos
         findContournsImg, contours, hierarchy = cv.findContours(frame.image.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -40,9 +43,6 @@ class ImageProcessing:
         # portanto ao pegar as ultimas x, será identificado as mais de dentro da imagem
         hierarchy = hierarchy[(last - 80):]
 
-        arrayOfAreas = []
-        arrayOfContours = []
-
         # pra cada contorno existente, será desenhado os que tiverem a proporção perto da placa
         for component in zip(contours, hierarchy):
             currentContour = component[0]
@@ -57,6 +57,7 @@ class ImageProcessing:
                 arrayOfAreas.append(area)
                 #print(frame.name + " Area: " + str(area) + "; Proportion: " + str(proportion))
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,255,0),1)
+                cv.drawContours(backtorgb, currentContour, 1, (0,255,255), 1)
                 cv.putText(backtorgb, str(proportion), (x,y), cv.FONT_HERSHEY_SIMPLEX, 1, (255,255,0),2)
                 arrayOfContours.append(currentContour)
 
@@ -71,10 +72,22 @@ class ImageProcessing:
 
             if areaFromContour >= areaMedia:
                 x,y,w,h = cv.boundingRect(contour)
+
                 possiblePlate = Frame(frame.originalImage[y:y+h, x:x+w], frame.name, None, None)        
                 height, width = possiblePlate.image.shape
 
+                # remove placas duplicadas
+                plateAlreadyExists = False
+                for shape in arrayOfShapes:
+                    if(shape[0] == height and shape[1] == width):
+                        plateAlreadyExists = True
+
+                if plateAlreadyExists:
+                    continue
+
                 calculatedArea = height * width
+                shape = height, width
+                arrayOfShapes.append(shape)
 
                 if calculatedArea > 760:
                     #print('passou ' + frame.name + ': ' + str(areaFromContour))
@@ -85,5 +98,5 @@ class ImageProcessing:
                 
             
         frame.arrayOfPlates = arrayOfPlates
-        #cv.imshow('img com contornos media' + frame.name, backtorgb)
+        cv.imshow('img com contornos media' + frame.name, backtorgb)
 

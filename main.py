@@ -5,6 +5,11 @@ import numpy as np
 from camera import Camera
 import queue
 from ocr import OcrThread
+import platews
+
+# response = platews.checkForPlateExistence('ayh-2598')
+
+# exit()
 
 imgGol1 = cv.imread("../../images/gol1.jpg", cv.IMREAD_GRAYSCALE)
 imgGol2 = cv.imread("../../images/gol2.jpg", cv.IMREAD_GRAYSCALE)
