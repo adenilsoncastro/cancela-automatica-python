@@ -6,6 +6,10 @@ class ImageProcessing:
 
     def __init__(self):
         pass
+    
+    def Dilate(self, image):
+        kernel = np.ones((5,5), np.uint8)
+        return cv.dilate(image, kernel, iterations=1)
 
     def GaussianBlur(self, image):
         return cv.GaussianBlur(image,(5,5),0)
@@ -56,13 +60,12 @@ class ImageProcessing:
                 area = cv.contourArea(currentContour)
                 arrayOfAreas.append(area)
                 #print(frame.name + " Area: " + str(area) + "; Proportion: " + str(proportion))
-                cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,255,0),1)
-                cv.drawContours(backtorgb, currentContour, 1, (0,255,255), 1)
                 cv.putText(backtorgb, str(proportion), (x,y), cv.FONT_HERSHEY_SIMPLEX, 1, (255,255,0),2)
                 arrayOfContours.append(currentContour)
 
-            if proportion > 0.59 and proportion < 0.82:
-                cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
+            # contorna as letras e números
+            # if proportion > 0.59 and proportion < 0.82:
+            #     cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
             
         areaMedia = np.mean(arrayOfAreas)
         #print('media ' + frame.name + ": " + str(areaMedia))
@@ -93,7 +96,8 @@ class ImageProcessing:
                     #print('passou ' + frame.name + ': ' + str(areaFromContour))
                     #print('height: ' + str(height) + '; width: ' + str(width))
                 
-                    cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
+                    # cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
+                    cv.drawContours(backtorgb, [contour], -1, (255,0,0), 2)
                     arrayOfPlates.append(possiblePlate)
                 
             

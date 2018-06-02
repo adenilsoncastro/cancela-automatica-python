@@ -66,7 +66,20 @@ for car in arrayOfCarsInitial:
     # img.image = imgProcessing.GaussianBlur(img.image)
     img.image = imgProcessing.Billateral(img.image)
     img.image = imgProcessing.Canny(img.image)
+
     imgProcessing.FindPossiblePlates(img)
+
+    if(len(img.arrayOfPlates) == 0):
+        print('no plates found in ' + img.name)
+        print('applying dilate filter')
+        img.image = imgProcessing.Dilate(img.image)
+        imgProcessing.FindPossiblePlates(img)
+        if(len(img.arrayOfPlates) == 0):
+            print('no plates found after dilate in ' + img.name)
+            print('applying gaussian blur filter')
+            img.image = imgProcessing.GaussianBlur(img.image)
+            imgProcessing.FindPossiblePlates(img)
+
     img.CropAllPlatesBorders()
     img.showAllPlatesThreshold()
 

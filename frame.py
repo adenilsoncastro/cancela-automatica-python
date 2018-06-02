@@ -52,7 +52,7 @@ class Frame:
     def CropPlateBorders(self, plate):
         y, x = plate.image.shape
 
-        y1New = int(np.ceil(y - y * 0.15))
+        y1New = int(np.ceil(y - y * 0.12))
         x1New = int(np.ceil(x - x * 0.05))
 
         y2New = int(np.ceil(y * 0.31))
