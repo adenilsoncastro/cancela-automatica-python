@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 from PIL import Image
+import os
 
 class Frame:
     def __init__(self, image, name, time, arrayOfPlates):
@@ -12,7 +13,7 @@ class Frame:
 
     def show(self):
         cv.imshow(self.name, self.image)
-    
+
     def shape(self):
         height, width = self.image.shape
         print('height: ' + str(height))
@@ -26,7 +27,7 @@ class Frame:
             # cv.imwrite(self.name + str(i) + '.png', plate.image)
             print(self.name + ": " + str(i) + str(plate.shape()))
 
-    
+
     def showAllPlatesThreshold(self):
         i = 0
         for plate in self.arrayOfPlates:
@@ -52,7 +53,7 @@ class Frame:
     def CropPlateBorders(self, plate):
         y, x = plate.image.shape
 
-        y1New = int(np.ceil(y - y * 0.12))
+        y1New = int(np.ceil(y - y * 0.05))
         x1New = int(np.ceil(x - x * 0.05))
 
         y2New = int(np.ceil(y * 0.31))
@@ -64,3 +65,9 @@ class Frame:
     def CropAllPlatesBorders(self):
         for plate in self.arrayOfPlates:
            plate = self.CropPlateBorders(plate)
+
+    def SaveImage(self):
+        cv.imwrite(os.path.join("../../", self.name), self.image)        
+        for plate in self.arrayOfPlates:
+            cv.imwrite(os.path.join("../../", self.name + '_result.jpg'), plate.image)
+
