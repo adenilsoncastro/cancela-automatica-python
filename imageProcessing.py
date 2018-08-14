@@ -6,6 +6,9 @@ class ImageProcessing:
 
     def __init__(self):
         pass
+
+    def EqualizeHistogram(self, image):
+        return cv.equalizeHist(image)
     
     def Dilate(self, image):
         kernel = np.ones((5,5), np.uint8)
@@ -105,5 +108,6 @@ class ImageProcessing:
                 
             
         frame.arrayOfPlates = arrayOfPlates
-        cv.imshow('img com contornos media' + frame.name, backtorgb)
+        #cv.imshow('img com contornos media' + frame.name, backtorgb)
+
 
