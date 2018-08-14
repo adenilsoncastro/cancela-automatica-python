@@ -31,9 +31,14 @@ class Frame:
         i = 0
         for plate in self.arrayOfPlates:
             i = i + 1
+            th3 = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,7,2)
+            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
+            cv.imwrite(self.name + str(i) + 'clean.png', plate.image)
             _, plate.image = cv.threshold(plate.image, 105, 255, 0)
             cv.imshow(self.name + "_threshold: " + str(i), plate.image)
-            cv.imwrite(self.name + str(i) + '_threshold.png', plate.image)
+            cv.imshow(self.name + "_thresholdAdaptive: " + str(i), th3)
+            cv.imshow(self.name + "_thresholdOtsu: " + str(i), otsu)
+            # cv.imwrite(self.name + str(i) + '_threshold.png', plate.image)
             print(self.name + ": " + str(i) + str(plate.shape()))
             # im = Image.fromarray(np.uint8(plate.image))
             # print(im.info['dpi'])

@@ -5,7 +5,7 @@ import numpy as np
 from camera import Camera
 import queue
 from ocr import OcrThread
-import platews
+# import platews
 
 # response = platews.checkForPlateExistence('ayh-2598')
 
@@ -30,9 +30,21 @@ imgGol16 = cv.imread("../../images/gol16.jpg", cv.IMREAD_GRAYSCALE)
 imgGol17 = cv.imread("../../images/ol17.jpg", cv.IMREAD_GRAYSCALE)
 imgGol18 = cv.imread("../../images/gol18.jpg", cv.IMREAD_GRAYSCALE)
 
+sandero1 = cv.imread("../../images/sandero-1.jpg", cv.IMREAD_GRAYSCALE)
+sandero2 = cv.imread("../../images/sandero-2.jpg", cv.IMREAD_GRAYSCALE)
+sandero3 = cv.imread("../../images/sandero-3.jpg", cv.IMREAD_GRAYSCALE)
+sandero4 = cv.imread("../../images/sandero-4.jpg", cv.IMREAD_GRAYSCALE)
+corsa1 = cv.imread("../../images/corsa-1.jpg", cv.IMREAD_GRAYSCALE)
+corsa2 = cv.imread("../../images/corsa-2.jpg", cv.IMREAD_GRAYSCALE)
+siena1 = cv.imread("../../images/siena1.jpg", cv.IMREAD_GRAYSCALE)
+meriva1 = cv.imread("../../images/meriva1.jpg", cv.IMREAD_GRAYSCALE)
+peugeot1 = cv.imread("../../images/peugeot1.jpg", cv.IMREAD_GRAYSCALE)
+hb201 = cv.imread("../../images/hb201.jpg", cv.IMREAD_GRAYSCALE)
+
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
-arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
-# arrayOfCarsInitial = np.array([imgGol2])
+# arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
+arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201])
+# arrayOfCarsInitial = np.array([peugeot1])
 
 # cap = cv.VideoCapture('../../images/gol_video.mp4')
 
@@ -58,7 +70,7 @@ i = 0
 
 for car in arrayOfCarsInitial:
     i = i + 1
-    img = Frame(car, 'gol' + str(i), None, None)
+    img = Frame(car, 'car' + str(i), None, None)
 
     imgProcessing = ImageProcessing()
 

@@ -45,7 +45,7 @@ class ImageProcessing:
         # pega somente as 50 hierarquias filhas
         # como na função findContourns foi utilizado cv.RETR_TREE, os contornos sao retornados em hierarquia
         # portanto ao pegar as ultimas x, será identificado as mais de dentro da imagem
-        hierarchy = hierarchy[(last - 80):]
+        hierarchy = hierarchy[(last - 50):]
 
         # pra cada contorno existente, será desenhado os que tiverem a proporção perto da placa
         for component in zip(contours, hierarchy):
@@ -86,6 +86,9 @@ class ImageProcessing:
                         plateAlreadyExists = True
 
                 if plateAlreadyExists:
+                    continue
+
+                if height < 30:
                     continue
 
                 calculatedArea = height * width
