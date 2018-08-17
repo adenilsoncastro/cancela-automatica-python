@@ -2,6 +2,8 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 import os
+from matplotlib import pyplot as plt
+import uuid
 
 class Frame:
     def __init__(self, image, name, time, arrayOfPlates):
@@ -10,6 +12,32 @@ class Frame:
         self.name = name
         self.time = time
         self.arrayOfPlates = arrayOfPlates
+
+    def showAmountOfColor(self, image):
+        white = gray = black = 0
+        lower = 255/3
+        upper = 2*lower
+        height, width = image.shape
+  
+        for i in range(height):
+            for j in range(width):
+                if image[i,j] >= lower:
+                    if image[i,j] <= upper:
+                        gray += 1
+                    else:
+                        white += 1
+                else:
+                    black += 1
+  
+        all = width*height
+
+        whiteR = 100.0*white/all
+        blackR = 100.0*black/all
+
+        print ("White pixels: %d (%5.2f%%)" % (white, whiteR))
+        print ("Black pixels: %d (%5.2f%%)" % (black, blackR))
+
+        return whiteR,blackR
 
     def show(self):
         cv.imshow(self.name, self.image)
@@ -29,20 +57,54 @@ class Frame:
 
 
     def showAllPlatesThreshold(self):
+        print(" ")
         i = 0
         for plate in self.arrayOfPlates:
             i = i + 1
-            th3 = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,7,2)
-            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
-            cv.imwrite(self.name + str(i) + 'clean.png', plate.image)
+            
+            # cv.imwrite(self.name + str(i) + 'clean.png', plate.image)
             _, plate.image = cv.threshold(plate.image, 105, 255, 0)
+            adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,7,2)
+            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
+            
             cv.imshow(self.name + "_threshold: " + str(i), plate.image)
-            cv.imshow(self.name + "_thresholdAdaptive: " + str(i), th3)
+            cv.imshow(self.name + "_thresholdAdaptive: " + str(i), adaptive)
             cv.imshow(self.name + "_thresholdOtsu: " + str(i), otsu)
             # cv.imwrite(self.name + str(i) + '_threshold.png', plate.image)
             print(self.name + ": " + str(i) + str(plate.shape()))
-            # im = Image.fromarray(np.uint8(plate.image))
-            # print(im.info['dpi'])
+
+            # histThresh = cv.calcHist([plate.image],[0],None,[256],[0,256])
+            # histOtsu = cv.calcHist([otsu],[0],None,[256],[0,256])
+            # plt.plot(histThresh)
+            # plt.plot(histOtsu)
+            # plt.show()
+                
+    def validateAmountOfWhiteAndBlackPixels(self):
+        print(" ")
+        i = 0
+        for plate in self.arrayOfPlates:
+            i = i + 1
+            
+            _, plate.image = cv.threshold(plate.image, 105, 255, 0)
+            adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,7,2)
+            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
+
+            print('normal')
+            white_normal, black_normal = self.showAmountOfColor(plate.image)
+
+            if white_normal < 40 :
+                print('otsu')
+                white_otsu, black_otsu = self.showAmountOfColor(otsu)
+
+                if black_otsu < 40 :
+                    self.arrayOfPlates.pop(i - 1)
+                    print("removed: " + plate.name)
+                    cv.imwrite("../rejected/pixelcolor/" + self.name + str(uuid.uuid4()) + '.png', plate.image)
+                else :
+                    plate.image = otsu
+                    print('otsu applied: ' + plate.name)
+                    cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
+
 
     def showShapeOfPlates(self):
         i = 0

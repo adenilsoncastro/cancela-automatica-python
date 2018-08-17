@@ -44,6 +44,7 @@ hb201 = cv.imread("../../images/hb201.jpg", cv.IMREAD_GRAYSCALE)
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
 # arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
 arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201])
+# arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4])
 # arrayOfCarsInitial = np.array([peugeot1])
 
 # cap = cv.VideoCapture('../../images/gol_video.mp4')
@@ -76,6 +77,7 @@ for car in arrayOfCarsInitial:
 
     img.CropImage(500, 1500, 400, 1500)
     # img.image = imgProcessing.GaussianBlur(img.image)
+    # img.image = imgProcessing.EqualizeHistogram(img.image)
     img.image = imgProcessing.Billateral(img.image)
     img.image = imgProcessing.Canny(img.image)
 
@@ -93,6 +95,7 @@ for car in arrayOfCarsInitial:
             imgProcessing.FindPossiblePlates(img)
 
     img.CropAllPlatesBorders()
+    img.validateAmountOfWhiteAndBlackPixels()
     img.showAllPlatesThreshold()
 
 # while(cap.isOpened()):

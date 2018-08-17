@@ -1,6 +1,8 @@
 import cv2 as cv
 import numpy as np
 from frame import Frame
+from matplotlib import pyplot as plt
+import uuid
 
 class ImageProcessing:
 
@@ -48,7 +50,7 @@ class ImageProcessing:
         # pega somente as 50 hierarquias filhas
         # como na função findContourns foi utilizado cv.RETR_TREE, os contornos sao retornados em hierarquia
         # portanto ao pegar as ultimas x, será identificado as mais de dentro da imagem
-        hierarchy = hierarchy[(last - 50):]
+        hierarchy = hierarchy[(last - 100):]
 
         # pra cada contorno existente, será desenhado os que tiverem a proporção perto da placa
         for component in zip(contours, hierarchy):
@@ -91,7 +93,8 @@ class ImageProcessing:
                 if plateAlreadyExists:
                     continue
 
-                if height < 30:
+                if height < 40:
+                    cv.imwrite("../rejected/height40/" + str(uuid.uuid4()) + '.png', possiblePlate.image)
                     continue
 
                 calculatedArea = height * width
@@ -105,9 +108,13 @@ class ImageProcessing:
                     # cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
                     cv.drawContours(backtorgb, [contour], -1, (255,0,0), 2)
                     arrayOfPlates.append(possiblePlate)
+                else:
+                    cv.imwrite("../rejected/area760/" + self.name + str(uuid.uuid4()) + '.png', possiblePlate.image)
+            else:
+                cv.imwrite("../rejected/menorareamedia/" + str(uuid.uuid4()) + '.png', frame.originalImage[y:y+h, x:x+w])
                 
             
         frame.arrayOfPlates = arrayOfPlates
-        #cv.imshow('img com contornos media' + frame.name, backtorgb)
+        cv.imshow('img com contornos media' + frame.name, backtorgb)
 
 
