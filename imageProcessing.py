@@ -91,6 +91,7 @@ class ImageProcessing:
 
         for contour in arrayOfContours:
             areaFromContour = cv.contourArea(contour)
+            areaFromContour = (areaFromContour + areaFromContour * 0.25)
 
             if areaFromContour >= areaMedia:
                 x,y,w,h = cv.boundingRect(contour)
