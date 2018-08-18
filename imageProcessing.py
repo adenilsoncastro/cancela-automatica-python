@@ -89,7 +89,7 @@ class ImageProcessing:
         areaMedia = np.mean(arrayOfAreas)
         #print('media ' + frame.name + ": " + str(areaMedia))
 
-        for contour in arrayOfContours:
+        for contour in arrayOfContours: 
             areaFromContour = cv.contourArea(contour)
             areaFromContour = (areaFromContour + areaFromContour * 0.25)
 
