@@ -19,7 +19,7 @@ class OcrThread(Thread):
       try:
         result = []
         result.append("../../images/" + self.frame.name)
-        result.append(ocr.image_to_string(Image.fromarray(self.frame.image)))
+        result.append(ocr.image_to_string(Image.fromarray(self.frame.image),config="--psm 8"))
         self.result_queue.put(result)
         print("ocr image processed: " + self.frame.name)
         log("ocr image processed: " + self.frame.name + " at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))

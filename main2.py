@@ -42,14 +42,15 @@ def handle_images():
                         log("Start processing image " + file + " at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))
                         imagem = cv.imread("../../images/" + file, cv.IMREAD_GRAYSCALE)
                         if imagem is not None:
-                            cv.imwrite(os.path.join("../../", file + '_original.jpg'), imagem)
+                            cv.imwrite(os.path.join("../../", file + '_original.png'), imagem)
                             imgProcessing = ImageProcessing()
                             img = Frame(imagem, file, None, None)
-                            img.image = imgProcessing.EqualizeHistogram(img.image)
+                            # img.image = imgProcessing.EqualizeHistogram(img.image)
                             img.image = imgProcessing.Billateral(img.image)
                             img.image = imgProcessing.Canny(img.image)
                             img.image = imgProcessing.GaussianBlur(img.image)
                             imgProcessing.FindPossiblePlates(img)
+                            img.validateAmountOfWhiteAndBlackPixels()
                             img.CropAllPlatesBorders()
                             if len(img.arrayOfPlates) > 0:
                                 for plate in enumerate(img.arrayOfPlates):
@@ -58,7 +59,7 @@ def handle_images():
                                     ocr = OcrThread(plate[1], result_ocr)
                                     ocr.setName(uuid.uuid4())
                                     threadList.append(ocr.getName())
-                                    log("New OCR thread created with id " + ocr.getName())
+                                    log("New OCR thread created with id " + ocr.getName() + " for plate " + file)
                                     ocr.start()
                                     log("Image " + file + " processed and sent to OCR at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f') + " with " + str(len(img.arrayOfPlates)) + " possible plate(s)")
                                 img.SaveImage()
@@ -69,6 +70,7 @@ def handle_images():
                                 log("No plates found, applying dilate filter...")
                                 img.image = imgProcessing.Dilate(img.image)
                                 imgProcessing.FindPossiblePlates(img)
+                                img.validateAmountOfWhiteAndBlackPixels()
                                 if len(img.arrayOfPlates) >  0:
                                     log(str(len(img.arrayOfPlates)) + " possible plate found after dilate filter")
                                     _,plate[1].image = cv.threshold(plate[1].image, 105, 255, cv.THRESH_BINARY)
@@ -95,8 +97,8 @@ def handle_images():
                             log("Error reading " + file)
                             time.sleep(.100)
                     except:
-                        print("Error: ", sys.exc_info()[0])
-                        log(str(sys.exc_info()[0]))
+                        print("Error: ", sys.exc_info())
+                        log(str(sys.exc_info()))
 
 def open_gate(name,plate):
     allowCapture = False
@@ -130,7 +132,7 @@ def log(text):
 def capture_images():
     while True:
         if allowCapture == True:
-            cam.capture("1920x1080", str(image_name()), "jpg")
+            cam.capture("1920x1080", str(image_name()), "png")
             time.sleep(.300)
         else:
             log("Image capture paused by system")
