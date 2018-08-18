@@ -108,7 +108,7 @@ class Frame:
                 if black_otsu < 40 :
                     self.arrayOfPlates.pop(i - 1)
                     print("removed: " + plate.name)
-                    cv.imwrite("../rejected/pixelcolor/" + self.name + str(uuid.uuid4()) + '.png', plate.image)
+                    cv.imwrite("../rejected/pixelcolor/ostu" + self.name + str(uuid.uuid4()) + '.png', plate.image)
                 else :
                     plate.image = otsu
                     print('otsu applied: ' + plate.name)
@@ -117,7 +117,7 @@ class Frame:
                 if black_adaptive < 10:
                     self.arrayOfPlates.pop(i - 1)
                     print("removed: " + plate.name)
-                    cv.imwrite("../rejected/pixelcolor/" + self.name + str(uuid.uuid4()) + '.png', plate.image)
+                    cv.imwrite("../rejected/pixelcolor/adaptive" + self.name + str(uuid.uuid4()) + '.png', plate.image)
 
     def showShapeOfPlates(self):
         i = 0
