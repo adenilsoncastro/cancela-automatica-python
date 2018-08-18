@@ -12,6 +12,7 @@ class Frame:
         self.name = name
         self.time = time
         self.arrayOfPlates = arrayOfPlates
+        self._id = str(uuid.uuid4()).split('-')[0]
 
     def showAmountOfColor(self, image):
         white = gray = black = 0
@@ -22,10 +23,12 @@ class Frame:
         for i in range(height):
             for j in range(width):
                 if image[i,j] >= lower:
-                    if image[i,j] <= upper:
-                        gray += 1
-                    else:
-                        white += 1
+                    # if image[i,j] <= upper:
+                    #     gray += 1
+                    # else:
+                    #     white += 1
+                    if image[i,j] > upper:
+                        white += 1                        
                 else:
                     black += 1
   
@@ -92,6 +95,12 @@ class Frame:
             print('normal')
             white_normal, black_normal = self.showAmountOfColor(plate.image)
 
+            print('adaptive')
+            white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
+
+            print('otsu')
+            white_otsu, black_otsu = self.showAmountOfColor(otsu)
+
             if white_normal < 40 :
                 print('otsu')
                 white_otsu, black_otsu = self.showAmountOfColor(otsu)
@@ -104,7 +113,11 @@ class Frame:
                     plate.image = otsu
                     print('otsu applied: ' + plate.name)
                     cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
-
+            else:
+                if black_adaptive < 10:
+                    self.arrayOfPlates.pop(i - 1)
+                    print("removed: " + plate.name)
+                    cv.imwrite("../rejected/pixelcolor/" + self.name + str(uuid.uuid4()) + '.png', plate.image)
 
     def showShapeOfPlates(self):
         i = 0

@@ -39,6 +39,17 @@ class ImageProcessing:
         arrayOfContours = []
         arrayOfShapes = []
 
+        # laplacian   = cv.Laplacian(frame.image.copy(),cv.CV_64F)
+        # sobelx      = cv.Sobel(frame.image.copy(),cv.CV_8U,1,0,ksize=3,scale=1,delta=0,borderType=cv.BORDER_DEFAULT)
+        # sobely      = cv.Sobel(frame.image.copy(),cv.CV_8U,0,1,ksize=3,scale=1,delta=0,borderType=cv.BORDER_DEFAULT)
+
+        # tmp, imgThs = cv.threshold(sobelx,0,255,cv.THRESH_OTSU+cv.THRESH_BINARY)
+
+        # morph = cv.getStructuringElement(cv.MORPH_RECT,(40,13))
+        # plateDetect = cv.morphologyEx(imgThs.copy(),cv.MORPH_CLOSE,morph)
+        # regionPlate = plateDetect.copy()
+        # cv.imshow("morph " + frame.name,plateDetect)
+
         # procura os contornos
         findContournsImg, contours, hierarchy = cv.findContours(frame.image.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
@@ -72,8 +83,8 @@ class ImageProcessing:
                 arrayOfContours.append(currentContour)
 
             # contorna as letras e números
-            # if proportion > 0.59 and proportion < 0.82:
-            #     cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
+            if proportion > 0.59 and proportion < 0.82:
+                cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
             
         areaMedia = np.mean(arrayOfAreas)
         #print('media ' + frame.name + ": " + str(areaMedia))
@@ -105,9 +116,6 @@ class ImageProcessing:
                 arrayOfShapes.append(shape)
 
                 if calculatedArea > 760:
-                    #print('passou ' + frame.name + ': ' + str(areaFromContour))
-                    #print('height: ' + str(height) + '; width: ' + str(width))
-                
                     # cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
                     cv.drawContours(backtorgb, [contour], -1, (255,0,0), 2)
                     arrayOfPlates.append(possiblePlate)
@@ -118,6 +126,6 @@ class ImageProcessing:
                 
             
         frame.arrayOfPlates = arrayOfPlates
-        cv.imshow('img com contornos media' + frame.name, backtorgb)
+        # cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
 
 
