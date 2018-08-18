@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 import os
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import uuid
 
 class Frame:
