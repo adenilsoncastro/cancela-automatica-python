@@ -26,6 +26,9 @@ class ImageProcessing:
     def Threshold(self, image, level):
         return cv.threshold(image, level, 255, 1)
 
+    def ThresholdPlusOtsu(self, image, level):
+        return cv.threshold(image, level, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
+
     def FindPossiblePlates(self, frame):
 
         # cv.imshow('inicial ' + frame.name, frame.image)
