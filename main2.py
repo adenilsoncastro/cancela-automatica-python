@@ -118,10 +118,11 @@ def open_gate(name,plate):
 def clean_data():
     for file in os.listdir("../../images"):
         try:
-            os.remove(file)            
+            os.remove("../../images/" + file)            
+            log("clean_data removed image" + file)            
         except:
-            print("Error: ", sys.exc_info()[0])
-            log(str(sys.exc_info()[0]))
+            print("Error: ", sys.exc_info())
+            log("Error: " + str(sys.exc_info()) + " when removing ../../images/" + file)
     log("Threads currently running: " + str(threading.enumerate()))
         
 
