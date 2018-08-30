@@ -8,7 +8,6 @@ class VerificaPlaca:
         pattern = re.compile("[A-Z]{3}-?[0-9]{4}")
         placa = placa.replace(" ", "")
         placa = placa.upper()
-        print("INNER VP: " + placa)
         if pattern.match(placa):
             return placa
         else:
