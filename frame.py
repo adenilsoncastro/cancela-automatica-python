@@ -105,7 +105,7 @@ class Frame:
                 print('otsu')
                 #white_otsu, black_otsu = self.showAmountOfColor(otsu)
 
-                if black_otsu < 40 :
+                if black_otsu < 35 :
                     self.arrayOfPlates.pop(i - 1)
                     print("removed: " + plate.name)
                     #cv.imwrite("../rejected/pixelcolor/ostu" + self.name + str(uuid.uuid4()) + '.png', plate.image)
