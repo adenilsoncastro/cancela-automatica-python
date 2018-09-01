@@ -144,7 +144,7 @@ class ImageProcessing:
                 arrayOfPlates.pop(i - 1)
                 cv.imwrite("../rejected/letter/" + frame.name + possiblePlate._id + '.png', plate.image)
             i = i + 1
-            # cv.imshow('placa' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
+            cv.imshow('placa' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
 
         frame.arrayOfPlates = arrayOfPlates
         cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
