@@ -71,7 +71,7 @@ while(True):
         cv.imwrite("../processed/canny/" + img.name + ".png", img.image)        
         imgProcessing.FindPossiblePlates(img)
         img.CropAllPlatesBorders()
-        #img.validateAmountOfWhiteAndBlackPixels()        
+        img.validateAmountOfWhiteAndBlackPixels()        
         log("New frame " + str(img.name) + " finished processing at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))
         print("New frame " + str(img.name) + " finished processing at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))        
         if len(img.arrayOfPlates) > 0:
