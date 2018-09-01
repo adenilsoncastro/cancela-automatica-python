@@ -42,32 +42,20 @@ peugeot1 = cv.imread("../../images/peugeot1.jpg", cv.IMREAD_GRAYSCALE)
 hb201 = cv.imread("../../images/hb201.jpg", cv.IMREAD_GRAYSCALE)
 
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
-# arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
-arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201, imgGol14])
+arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
+# arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201, imgGol14])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4])
-# arrayOfCarsInitial = np.array([peugeot1])
+# arrayOfCarsInitial = np.array([corsa1])
 
 # cap = cv.VideoCapture('../../images/gol_video.mp4')
-
-
 #cam = Camera()
 #cam.capture("640x720", "test", "jpg")
-#
+
 #result_ocr = queue.Queue()
 #ocr = OcrThread()
 #ocr.create_ocr_thread(imgGol1, result_ocr)
 
 i = 0
-
-# img = Frame(imgGol1, 'gol', None, None)
-
-# imgProcessing = ImageProcessing()
-
-# img.CropImage(500, 1500, 400, 1500)
-# img.image = imgProcessing.GaussianBlur(img.image)
-# img.image = imgProcessing.Canny(img.image)
-# imgProcessing.FindPossiblePlates(img)
-# img.showAllPlates()
 
 for car in arrayOfCarsInitial:
     i = i + 1
@@ -78,6 +66,7 @@ for car in arrayOfCarsInitial:
     img.CropImage(500, 1500, 400, 1500)
     # img.image = imgProcessing.GaussianBlur(img.image)
     # img.image = imgProcessing.EqualizeHistogram(img.image)
+    original_image = img.image
     img.image = imgProcessing.Billateral(img.image)
     img.image = imgProcessing.Canny(img.image)
 
@@ -96,7 +85,7 @@ for car in arrayOfCarsInitial:
 
     img.CropAllPlatesBorders()
     img.validateAmountOfWhiteAndBlackPixels()
-    img.showAllPlatesThreshold()
+    # img.showAllPlatesThreshold()
 
 # while(cap.isOpened()):
 #     ret, frame = cap.read()

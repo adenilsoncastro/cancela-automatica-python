@@ -23,7 +23,7 @@ class ImageProcessing:
         return cv.bilateralFilter(image, 8,50,50)
 
     def Canny(self, image):
-        return cv.Canny(image, 145, 255)
+        return cv.Canny(image, 90, 255) #145 255
 
     def Threshold(self, image, level):
         return cv.threshold(image, level, 255, 1)
@@ -38,17 +38,6 @@ class ImageProcessing:
         arrayOfAreas = []
         arrayOfContours = []
         arrayOfShapes = []
-
-        # laplacian   = cv.Laplacian(frame.image.copy(),cv.CV_64F)
-        # sobelx      = cv.Sobel(frame.image.copy(),cv.CV_8U,1,0,ksize=3,scale=1,delta=0,borderType=cv.BORDER_DEFAULT)
-        # sobely      = cv.Sobel(frame.image.copy(),cv.CV_8U,0,1,ksize=3,scale=1,delta=0,borderType=cv.BORDER_DEFAULT)
-
-        # tmp, imgThs = cv.threshold(sobelx,0,255,cv.THRESH_OTSU+cv.THRESH_BINARY)
-
-        # morph = cv.getStructuringElement(cv.MORPH_RECT,(40,13))
-        # plateDetect = cv.morphologyEx(imgThs.copy(),cv.MORPH_CLOSE,morph)
-        # regionPlate = plateDetect.copy()
-        # cv.imshow("morph " + frame.name,plateDetect)
 
         # procura os contornos
         findContournsImg, contours, hierarchy = cv.findContours(frame.image.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -69,7 +58,6 @@ class ImageProcessing:
         # pra cada contorno existente, será desenhado os que tiverem a proporção perto da placa
         for component in zip(contours, hierarchy):
             currentContour = component[0]
-            currentHierarchy = component[1]
             x,y,w,h = cv.boundingRect(currentContour)
             cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,255,0),1)
 
@@ -87,11 +75,9 @@ class ImageProcessing:
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
             
         areaMedia = np.mean(arrayOfAreas)
-        #print('media ' + frame.name + ": " + str(areaMedia))
 
         for contour in arrayOfContours: 
-            areaFromContour = cv.contourArea(contour)
-            areaFromContour = (areaFromContour + areaFromContour * 0.25)
+            areaFromContour = cv.contourArea(contour) * 1.4
 
             if areaFromContour >= areaMedia:
                 x,y,w,h = cv.boundingRect(contour)
@@ -108,8 +94,8 @@ class ImageProcessing:
                 if plateAlreadyExists:
                     continue
 
-                if height < 40:
-                    cv.imwrite("../rejected/height40/" + str(uuid.uuid4()) + '.png', possiblePlate.image)
+                if height < 38:
+                    cv.imwrite("../rejected/height40/" + possiblePlate._id + '.png', possiblePlate.image)
                     continue
 
                 calculatedArea = height * width
@@ -120,13 +106,40 @@ class ImageProcessing:
                     # cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
                     cv.drawContours(backtorgb, [contour], -1, (255,0,0), 2)
                     arrayOfPlates.append(possiblePlate)
+                    # cv.imshow(str(uuid.uuid4()), possiblePlate.image)
                 else:
-                    cv.imwrite("../rejected/area760/" + self.name + str(uuid.uuid4()) + '.png', possiblePlate.image)
+                    cv.imwrite("../rejected/area760/" + self.name + possiblePlate._id + '.png', possiblePlate.image)
             else:
                 cv.imwrite("../rejected/menorareamedia/" + str(uuid.uuid4()) + '.png', frame.originalImage[y:y+h, x:x+w])
-                
+
+        i = 0
+        for plate in arrayOfPlates:
+            plateCopy = plate.image.copy()
+            plateCopy = self.Billateral(plateCopy)
+            plateCopy = self.Canny(plateCopy)
+            findContournsImg, contoursPlate, hierarchy = cv.findContours(plateCopy.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
             
+            backtorgbplate = cv.cvtColor(plateCopy, cv.COLOR_GRAY2RGB)
+
+            hasPlate = False
+
+            for contour in contoursPlate:
+                x,y,w,h = cv.boundingRect(contour)
+                proportion = float(w) / h
+                if proportion > 0.59 and proportion < 0.82 and h > 10:
+                    areaFromContour = cv.contourArea(contour)
+                    print("cotour area: " + str(areaFromContour))
+                    print("area: " + str(float(w) * h))
+                    cv.rectangle(backtorgbplate,(x,y),(x+w,y+h),(0,0,255),1)
+                    hasPlate = True
+            
+            if hasPlate == False:
+                arrayOfPlates.pop(i - 1)
+                cv.imwrite("../rejected/letter/" + frame.name + possiblePlate._id + '.png', plate.image)
+            i = i + 1
+            # cv.imshow('placa' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
+
         frame.arrayOfPlates = arrayOfPlates
-        # cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
+        cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
 
 

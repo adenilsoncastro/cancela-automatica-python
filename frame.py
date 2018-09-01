@@ -15,20 +15,15 @@ class Frame:
         self._id = str(uuid.uuid4()).split('-')[0]
 
     def showAmountOfColor(self, image):
-        white = gray = black = 0
+        white = black = 0
         lower = 255/3
         upper = 2*lower
         height, width = image.shape
   
         for i in range(height):
             for j in range(width):
-                if image[i,j] >= lower:
-                    # if image[i,j] <= upper:
-                    #     gray += 1
-                    # else:
-                    #     white += 1
-                    if image[i,j] > upper:
-                        white += 1                        
+                if image[i,j] > upper:
+                    white += 1                        
                 else:
                     black += 1
   
@@ -66,13 +61,14 @@ class Frame:
             i = i + 1
             
             # cv.imwrite(self.name + str(i) + 'clean.png', plate.image)
-            _, plate.image = cv.threshold(plate.image, 105, 255, 0)
             adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,7,2)
-            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
-            
+            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+            _, plate.image = cv.threshold(plate.image, 105, 255, 0)
+
             cv.imshow(self.name + "_threshold: " + str(i), plate.image)
             cv.imshow(self.name + "_thresholdAdaptive: " + str(i), adaptive)
             cv.imshow(self.name + "_thresholdOtsu: " + str(i), otsu)
+            
             # cv.imwrite(self.name + str(i) + '_threshold.png', plate.image)
             print(self.name + ": " + str(i) + str(plate.shape()))
 
@@ -88,36 +84,37 @@ class Frame:
         for plate in self.arrayOfPlates:
             i = i + 1
             
-            _, plate.image = cv.threshold(plate.image, 105, 255, 0)
-            adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_MEAN_C,cv.THRESH_BINARY,7,2)
-            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY_INV+cv.THRESH_OTSU)
+            # adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,5,2)
+            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+            # aret, teste = cv.threshold(plate.image.copy(),150,255,0)
+            _, normal = cv.threshold(plate.image.copy(), 105, 255, 0)
+
+            # cv.imshow('adaptive', adaptive)
+            # cv.imshow('otsu', otsu)
+            # cv.imshow('normal', plate.name)
+            # cv.imshow('teste', teste)
 
             print('normal')
             white_normal, black_normal = self.showAmountOfColor(plate.image)
 
-            print('adaptive')
-            white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
+            # print('adaptive')
+            # white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
 
-            print('otsu')
-            white_otsu, black_otsu = self.showAmountOfColor(otsu)
+            # print('otsu')
+            # white_otsu, black_otsu = self.showAmountOfColor(otsu)
 
-            if white_normal < 40 :
+            if white_normal > 70 :
                 print('otsu')
-                white_otsu, black_otsu = self.showAmountOfColor(otsu)
-
-                if black_otsu < 35 :
-                    self.arrayOfPlates.pop(i - 1)
-                    print("removed: " + plate.name)
-                    cv.imwrite("../rejected/pixelcolor/ostu" + self.name + str(uuid.uuid4()) + '.png', plate.image)
-                else :
-                    plate.image = otsu
-                    print('otsu applied: ' + plate.name)
-                    cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
+                ret, plate.image = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+                print('otsu applied: ' + plate.name)
+                # cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
+                # if white_otsu < 50 :
+                #     self.arrayOfPlates.pop(i - 1)
+                #     print("removed: " + plate.name)
+                #     cv.imwrite("../rejected/pixelcolor/ostu" + self.name + str(uuid.uuid4()) + '.png', plate.image)
             else:
-                if black_adaptive < 10:
-                    self.arrayOfPlates.pop(i - 1)
-                    print("removed: " + plate.name)
-                    cv.imwrite("../rejected/pixelcolor/adaptive" + self.name + str(uuid.uuid4()) + '.png', plate.image)
+                plate.image = normal
+                cv.imshow(self.name + "normal: " + str(i), plate.image)
 
     def showShapeOfPlates(self):
         i = 0
