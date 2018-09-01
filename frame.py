@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 import os
-# from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 import uuid
 
 class Frame:
@@ -104,7 +104,6 @@ class Frame:
             # white_otsu, black_otsu = self.showAmountOfColor(otsu)
 
             if white_normal > 70 :
-                print('otsu')
                 ret, plate.image = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
                 print('otsu applied: ' + plate.name)
                 # cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)

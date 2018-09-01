@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 from frame import Frame
-# from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 import uuid
 
 class ImageProcessing:
@@ -33,6 +33,10 @@ class ImageProcessing:
 
     def FindPossiblePlates(self, frame):
 
+        if frame.image is None:
+            frame.arrayOfPlates = []
+            return
+
         # cv.imshow('inicial ' + frame.name, frame.image)
         arrayOfPlates = []
         arrayOfAreas = []
@@ -41,6 +45,9 @@ class ImageProcessing:
 
         # procura os contornos
         findContournsImg, contours, hierarchy = cv.findContours(frame.image.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        if len(contours) == 0:
+            return
 
         # converte a imagem pra colorida apenas para a melhor visualziação
         backtorgb = cv.cvtColor(findContournsImg, cv.COLOR_GRAY2RGB)
