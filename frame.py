@@ -53,7 +53,6 @@ class Frame:
             # cv.imwrite(self.name + str(i) + '.png', plate.image)
             print(self.name + ": " + str(i) + str(plate.shape()))
 
-
     def showAllPlatesThreshold(self):
         print(" ")
         i = 0
@@ -92,10 +91,9 @@ class Frame:
             # cv.imshow('adaptive', adaptive)
             # cv.imshow('otsu', otsu)
             # cv.imshow('normal', plate.name)
-            # cv.imshow('teste', teste)
 
             print('normal')
-            white_normal, black_normal = self.showAmountOfColor(plate.image)
+            white_normal, black_normal = self.showAmountOfColor(normal)
 
             # print('adaptive')
             # white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
@@ -103,17 +101,24 @@ class Frame:
             # print('otsu')
             # white_otsu, black_otsu = self.showAmountOfColor(otsu)
 
+            if white_normal < 20:
+                _, teste = cv.threshold(plate.image.copy(), 55, 255, cv.THRESH_BINARY)
+                cv.imshow(self.name + "_newThreshold_applied: " + str(i), teste)
+                return
+
             if white_normal > 70 :
+                cv.imshow(self.name + "normal: " + str(i), plate.image)
                 ret, plate.image = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
                 print('otsu applied: ' + plate.name)
-                # cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
+                cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
+                return
                 # if white_otsu < 50 :
                 #     self.arrayOfPlates.pop(i - 1)
                 #     print("removed: " + plate.name)
                 #     cv.imwrite("../rejected/pixelcolor/ostu" + self.name + str(uuid.uuid4()) + '.png', plate.image)
-            else:
-                plate.image = normal
-                cv.imshow(self.name + "normal: " + str(i), plate.image)
+            
+            plate.image = normal
+            cv.imshow(self.name + "normal: " + str(i), plate.image)
 
     def showShapeOfPlates(self):
         i = 0
