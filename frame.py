@@ -84,7 +84,7 @@ class Frame:
             i = i + 1
             
             # adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,5,2)
-            ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
+            #ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
             # aret, teste = cv.threshold(plate.image.copy(),150,255,0)
             _, normal = cv.threshold(plate.image.copy(), 105, 255, 0)
 
