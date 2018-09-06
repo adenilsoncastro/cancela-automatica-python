@@ -40,6 +40,7 @@ class ImageProcessing:
         # cv.imshow('inicial ' + frame.name, frame.image)
         arrayOfPlates = []
         arrayOfAreas = []
+        arrayOfAreasCalculated = []
         arrayOfContours = []
         arrayOfShapes = []
 
@@ -73,6 +74,7 @@ class ImageProcessing:
 
             if proportion > 2.83 and proportion < 3.20:
                 area = cv.contourArea(currentContour)
+                arrayOfAreasCalculated.append(w * h)
                 arrayOfAreas.append(area)
                 #print(frame.name + " Area: " + str(area) + "; Proportion: " + str(proportion))
                 cv.putText(backtorgb, str(proportion), (x,y), cv.FONT_HERSHEY_SIMPLEX, 1, (255,255,0),2)
@@ -83,6 +85,9 @@ class ImageProcessing:
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
             
         areaMedia = np.mean(arrayOfAreas)
+        areaMediaCalculada = np.mean(arrayOfAreasCalculated)
+        # print(str(areaMedia))
+        # print(str(areaMediaCalculada))
 
         for contour in arrayOfContours: 
             areaFromContour = cv.contourArea(contour) * 1.4
@@ -134,10 +139,8 @@ class ImageProcessing:
             for contour in contoursPlate:
                 x,y,w,h = cv.boundingRect(contour)
                 proportion = float(w) / h
-                if proportion > 0.59 and proportion < 0.82 and h > 10:
+                if proportion > 0.57 and proportion < 0.82 and h > 11:
                     areaFromContour = cv.contourArea(contour)
-                    # print("cotour area: " + str(areaFromContour))
-                    # print("area: " + str(float(w) * h))
                     cv.rectangle(backtorgbplate,(x,y),(x+w,y+h),(0,0,255),1)
                     hasPlate = True
             
@@ -149,5 +152,3 @@ class ImageProcessing:
 
         frame.arrayOfPlates = arrayOfPlates
         #cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
-
-

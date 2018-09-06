@@ -42,10 +42,10 @@ peugeot1 = cv.imread("../../images/peugeot1.jpg", cv.IMREAD_GRAYSCALE)
 hb201 = cv.imread("../../images/hb201.jpg", cv.IMREAD_GRAYSCALE)
 
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
-arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
+# arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201, imgGol14])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4])
-# arrayOfCarsInitial = np.array([corsa1])
+arrayOfCarsInitial = np.array([meriva1, corsa1,corsa2])
 
 # cap = cv.VideoCapture('../../images/gol_video.mp4')
 #cam = Camera()
