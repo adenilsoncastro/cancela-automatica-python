@@ -71,7 +71,7 @@ while(True):
         cv.imwrite("../processed/canny/" + img.name + ".png", img.image)        
         imgProcessing.FindPossiblePlates(img)
         img.CropAllPlatesBorders()
-        img.validateAmountOfWhiteAndBlackPixels()        
+        img.validateAmountOfWhiteAndBlackPixels()       
         log("New frame " + str(img.name) + " finished processing at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))
         print("New frame " + str(img.name) + " finished processing at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))        
         if len(img.arrayOfPlates) > 0:
@@ -83,7 +83,7 @@ while(True):
                 #cv.imwrite("../processed/threshold_otsu/" + str(img.name) + ".png", otsu, 90)
                 #cv.imwrite("../processed/threshold_normal/" + str(img.name) + ".png", normal, 105)
 
-                _,plate.image = imgProcessing.ThresholdPlusOtsu(plate.image, 105)
+                #_,plate.image = imgProcessing.ThresholdPlusOtsu(plate.image, 105)
                 #_,plate.image = cv.threshold(plate.image,105,255,0)
                 cv.imwrite("../processed/" + str(image_name()) + ".png", plate.image)
                 result = ocr.image_to_string(Image.fromarray(plate.image), config="--psm 8")
@@ -110,11 +110,12 @@ while(True):
             img.image = imgProcessing.Dilate(img.image)
             cv.imwrite("../processed/dilate/" + str(img.name) + " .png", img.image)
             imgProcessing.FindPossiblePlates(img)
+            img.validateAmountOfWhiteAndBlackPixels()
             if len(img.arrayOfPlates) >  0:
                 log(str(len(img.arrayOfPlates)) + " possible plate found after applying dilate filter")
                 print(str(len(img.arrayOfPlates)) + " possible plate found after applying dilate filter")
                 for plate in img.arrayOfPlates:
-                    _,plate.image = cv.threshold(plate.image,105,255,0)
+                    #_,plate.image = cv.threshold(plate.image,105,255,0)
                     cv.imwrite("../processed/" + str(image_name()) + ".png", plate.image)
                     result = ocr.image_to_string(Image.fromarray(plate.image), config="--psm 8")
                     log("OCR finished processing for frame " + str(img.name) + ". Result: " + result + " - Time: " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))            

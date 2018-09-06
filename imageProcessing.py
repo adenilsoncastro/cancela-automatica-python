@@ -47,6 +47,7 @@ class ImageProcessing:
         findContournsImg, contours, hierarchy = cv.findContours(frame.image.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
         if len(contours) == 0:
+            frame.arrayOfPlates = []
             return
 
         # converte a imagem pra colorida apenas para a melhor visualziação
@@ -135,8 +136,8 @@ class ImageProcessing:
                 proportion = float(w) / h
                 if proportion > 0.59 and proportion < 0.82 and h > 10:
                     areaFromContour = cv.contourArea(contour)
-                    print("cotour area: " + str(areaFromContour))
-                    print("area: " + str(float(w) * h))
+                    # print("cotour area: " + str(areaFromContour))
+                    # print("area: " + str(float(w) * h))
                     cv.rectangle(backtorgbplate,(x,y),(x+w,y+h),(0,0,255),1)
                     hasPlate = True
             

@@ -87,7 +87,7 @@ class Frame:
             # adaptive = cv.adaptiveThreshold(plate.image.copy(),255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,5,2)
             #ret, otsu = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
             # aret, teste = cv.threshold(plate.image.copy(),150,255,0)
-            _, normal = cv.threshold(plate.image.copy(), 105, 255, 0)
+            _, normal = cv.threshold(plate.image.copy(), 80, 255, 0)
 
             # cv.imshow('adaptive', adaptive)
             # cv.imshow('otsu', otsu)
@@ -95,7 +95,7 @@ class Frame:
             # cv.imshow('teste', teste)
 
             print('normal')
-            white_normal, black_normal = self.showAmountOfColor(plate.image)
+            white_normal, black_normal = self.showAmountOfColor(normal)
 
             # print('adaptive')
             # white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
@@ -113,7 +113,7 @@ class Frame:
                 #     cv.imwrite("../rejected/pixelcolor/ostu" + self.name + str(uuid.uuid4()) + '.png', plate.image)
             else:
                 plate.image = normal
-                cv.imshow(self.name + "normal: " + str(i), plate.image)
+                #cv.imshow(self.name + "normal: " + str(i), plate.image)
 
     def showShapeOfPlates(self):
         i = 0
