@@ -54,10 +54,11 @@ noite8 = cv.imread("../../images/noite8.png", cv.IMREAD_GRAYSCALE)
 # arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201, imgGol14])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4])
-arrayOfCarsInitial = np.array([meriva1, corsa1,corsa2])
-arrayOfCarsInitial = np.array([corsa1])
+# arrayOfCarsInitial = np.array([meriva1, corsa1,corsa2])
+# arrayOfCarsInitial = np.array([corsa1])
 # arrayOfCarsInitial = np.array([noite1, noite2, noite3, noite4, noite5, noite6])
 # arrayOfCarsInitial = np.array([noite1, noite8])
+arrayOfCarsInitial = np.array([noite8, imgGol11])
 
 i = 0
 
@@ -72,39 +73,38 @@ for car in arrayOfCarsInitial:
     img.image = imgProcessing.Billateral(img.image)
     img.image = imgProcessing.Canny(img.image)
 
-    imgProcessing.FindPossiblePlates(img, False)
+    imgProcessing.FindPossiblePlates(img, False, False)
 
     if(len(img.arrayOfPlates) == 0):
         print('no plates found in ' + img.name)
         print('applying dilate filter')
         dilate = imgProcessing.Dilate(img.image)
         img.image = dilate
-        imgProcessing.FindPossiblePlates(img, False)
+        imgProcessing.FindPossiblePlates(img, False, True)
         if(len(img.arrayOfPlates) == 0):
             print('no plates found after dilate in ' + img.name)
             print('applying gaussian blur filter')
             img.image = imgProcessing.GaussianBlur(img.image)
-            imgProcessing.FindPossiblePlates(img, False)
+            imgProcessing.FindPossiblePlates(img, False, True)
 
     if(len(img.arrayOfPlates) == 0):
-        print('no plates found after gaussian in ' + img.name)
+        print('no plates found without more light ' + img.name)
         print('applying bright filter')
         img.image = imgProcessing.MoreLight(img.originalImage)
         cv.imshow('light ' + img.name, img.image)
         img.image = imgProcessing.Billateral(img.image)
         img.image = imgProcessing.Canny(img.image)
-        imgProcessing.FindPossiblePlates(img, True)
+        imgProcessing.FindPossiblePlates(img, True, False)
         if(len(img.arrayOfPlates) == 0):
             print('no plates found in ' + img.name)
             print('applying dilate filter')
-            dilate = imgProcessing.Dilate(img.image)
-            img.image = dilate
-            imgProcessing.FindPossiblePlates(img, False)
+            img.image = imgProcessing.Dilate(img.image)
+            imgProcessing.FindPossiblePlates(img, True, True)
             if(len(img.arrayOfPlates) == 0):
                 print('no plates found after dilate in ' + img.name)
                 print('applying gaussian blur filter')
                 img.image = imgProcessing.GaussianBlur(img.image)
-                imgProcessing.FindPossiblePlates(img, False)
+                imgProcessing.FindPossiblePlates(img, True, True)
 
     img.CropAllPlatesBorders()
     img.validateAmountOfWhiteAndBlackPixels()

@@ -34,7 +34,7 @@ class ImageProcessing:
     def MoreLight(self, image):
         return cv.addWeighted(image,3, np.zeros(image.shape, image.dtype), 0, 20)
 
-    def FindPossiblePlates(self, frame, usingBright):
+    def FindPossiblePlates(self, frame, usingBright, usingDilate):
 
         if frame.image is None:
             frame.arrayOfPlates = []
@@ -110,9 +110,11 @@ class ImageProcessing:
         for plate in arrayOfPlates:
             plateCopy = plate.image.copy()
             if usingBright:
-                plateCopy = cv.addWeighted(plateCopy,2, np.zeros(plateCopy.shape, plateCopy.dtype), 0, 10)
+                plateCopy = self.MoreLight(plateCopy)
             plateCopy = self.Billateral(plateCopy)
             plateCopy = self.Canny(plateCopy)
+            if usingDilate:
+                plateCopy = self.Dilate(plateCopy)
             findContournsImg, contoursPlate, hierarchy = cv.findContours(plateCopy.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
             
             backtorgbplate = cv.cvtColor(plateCopy, cv.COLOR_GRAY2RGB)
