@@ -94,7 +94,7 @@ class Frame:
 
             print('normal')
             white_normal, black_normal = self.showAmountOfColor(normal)
-
+            cv.imshow(self.name + "normal: " + str(i), plate.image)
             # print('adaptive')
             # white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
 
@@ -102,12 +102,13 @@ class Frame:
             # white_otsu, black_otsu = self.showAmountOfColor(otsu)
 
             if white_normal < 20:
-                _, teste = cv.threshold(plate.image.copy(), 55, 255, cv.THRESH_BINARY)
-                cv.imshow(self.name + "_newThreshold_applied: " + str(i), teste)
+                print('muito escura')
+                _, plate.image = cv.threshold(plate.image.copy(), 55, 255, cv.THRESH_BINARY)
+                cv.imshow(self.name + "_newThreshold_applied: " + str(i), plate.image)
                 return
 
             if white_normal > 70 :
-                cv.imshow(self.name + "normal: " + str(i), plate.image)
+                print('muito escura')
                 ret, plate.image = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
                 print('otsu applied: ' + plate.name)
                 cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
@@ -127,9 +128,14 @@ class Frame:
             i = i + 1
             cv.imshow(self.name + ": " + str(i), plate)
 
-    def CropImage(self, x1, x2, y1, y2):
-        self.originalImage = self.originalImage[x1:x2, y1:y2]
-        self.image = self.image[x1:x2, y1:y2]
+    def CropImage(self):
+        height, width = self.image.shape
+        x1 = round(width * 0.10)
+        x2 = round(width - x1)
+        y1 = round(height * 0.15)
+        y2 = round(height - 30)
+        self.originalImage = self.originalImage[y1:y2, x1:x2]
+        self.image = self.image[y1:y2, x1:x2]
 
     def CropPlateBorders(self, plate):
         y, x = plate.image.shape

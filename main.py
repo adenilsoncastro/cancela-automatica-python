@@ -41,19 +41,23 @@ meriva1 = cv.imread("../../images/meriva1.jpg", cv.IMREAD_GRAYSCALE)
 peugeot1 = cv.imread("../../images/peugeot1.jpg", cv.IMREAD_GRAYSCALE)
 hb201 = cv.imread("../../images/hb201.jpg", cv.IMREAD_GRAYSCALE)
 
+noite1 = cv.imread("../../images/noite1.png", cv.IMREAD_GRAYSCALE)
+noite2 = cv.imread("../../images/noite2.png", cv.IMREAD_GRAYSCALE)
+noite3 = cv.imread("../../images/noite3.png", cv.IMREAD_GRAYSCALE)
+noite4 = cv.imread("../../images/noite4.png", cv.IMREAD_GRAYSCALE)
+noite5 = cv.imread("../../images/noite5.png", cv.IMREAD_GRAYSCALE)
+noite6 = cv.imread("../../images/noite6.png", cv.IMREAD_GRAYSCALE)
+noite7 = cv.imread("../../images/noite7.png", cv.IMREAD_GRAYSCALE)
+noite8 = cv.imread("../../images/noite8.png", cv.IMREAD_GRAYSCALE)
+
 # arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
 # arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201, imgGol14])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4])
 arrayOfCarsInitial = np.array([meriva1, corsa1,corsa2])
-
-# cap = cv.VideoCapture('../../images/gol_video.mp4')
-#cam = Camera()
-#cam.capture("640x720", "test", "jpg")
-
-#result_ocr = queue.Queue()
-#ocr = OcrThread()
-#ocr.create_ocr_thread(imgGol1, result_ocr)
+arrayOfCarsInitial = np.array([corsa1])
+# arrayOfCarsInitial = np.array([noite1, noite2, noite3, noite4, noite5, noite6])
+# arrayOfCarsInitial = np.array([noite1, noite8])
 
 i = 0
 
@@ -63,47 +67,46 @@ for car in arrayOfCarsInitial:
 
     imgProcessing = ImageProcessing()
 
-    img.CropImage(500, 1500, 400, 1500)
-    # img.image = imgProcessing.GaussianBlur(img.image)
-    # img.image = imgProcessing.EqualizeHistogram(img.image)
-    original_image = img.image
+    img.CropImage()
+    cv.imshow('inicial crop' + img.name, img.image)
     img.image = imgProcessing.Billateral(img.image)
     img.image = imgProcessing.Canny(img.image)
 
-    imgProcessing.FindPossiblePlates(img)
+    imgProcessing.FindPossiblePlates(img, False)
 
     if(len(img.arrayOfPlates) == 0):
         print('no plates found in ' + img.name)
         print('applying dilate filter')
-        img.image = imgProcessing.Dilate(img.image)
-        imgProcessing.FindPossiblePlates(img)
+        dilate = imgProcessing.Dilate(img.image)
+        img.image = dilate
+        imgProcessing.FindPossiblePlates(img, False)
         if(len(img.arrayOfPlates) == 0):
             print('no plates found after dilate in ' + img.name)
             print('applying gaussian blur filter')
             img.image = imgProcessing.GaussianBlur(img.image)
-            imgProcessing.FindPossiblePlates(img)
+            imgProcessing.FindPossiblePlates(img, False)
+
+    if(len(img.arrayOfPlates) == 0):
+        print('no plates found after gaussian in ' + img.name)
+        print('applying bright filter')
+        img.image = imgProcessing.MoreLight(img.originalImage)
+        cv.imshow('light ' + img.name, img.image)
+        img.image = imgProcessing.Billateral(img.image)
+        img.image = imgProcessing.Canny(img.image)
+        imgProcessing.FindPossiblePlates(img, True)
+        if(len(img.arrayOfPlates) == 0):
+            print('no plates found in ' + img.name)
+            print('applying dilate filter')
+            dilate = imgProcessing.Dilate(img.image)
+            img.image = dilate
+            imgProcessing.FindPossiblePlates(img, False)
+            if(len(img.arrayOfPlates) == 0):
+                print('no plates found after dilate in ' + img.name)
+                print('applying gaussian blur filter')
+                img.image = imgProcessing.GaussianBlur(img.image)
+                imgProcessing.FindPossiblePlates(img, False)
 
     img.CropAllPlatesBorders()
     img.validateAmountOfWhiteAndBlackPixels()
-    # img.showAllPlatesThreshold()
-
-# while(cap.isOpened()):
-#     ret, frame = cap.read()
-#     i = i + 1
-#     if i % 100 == 0:
-#         if frame is not None:
-#             img = Frame(frame, 'gol' + str(i), None, None)
-
-#             imgProcessing = ImageProcessing()
-
-#             img.CropImage(500, 1500, 400, 1500)
-#             # img.image = imgProcessing.GaussianBlur(img.image)
-#             img.image = imgProcessing.Billateral(img.image)
-#             img.image = imgProcessing.Canny(img.image)
-#             imgProcessing.FindPossiblePlates(img)
-#         if i == 400:
-#             cap.release()
-
-# cap.release()
 
 cv.waitKey(0)

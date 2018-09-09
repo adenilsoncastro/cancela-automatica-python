@@ -23,7 +23,7 @@ class ImageProcessing:
         return cv.bilateralFilter(image, 8,50,50)
 
     def Canny(self, image):
-        return cv.Canny(image, 90, 255) #145 255
+        return cv.Canny(image, 40, 255) #145 255
 
     def Threshold(self, image, level):
         return cv.threshold(image, level, 255, 1)
@@ -31,16 +31,16 @@ class ImageProcessing:
     def ThresholdPlusOtsu(self, image, level):
         return cv.threshold(image, level, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
 
-    def FindPossiblePlates(self, frame):
+    def MoreLight(self, image):
+        return cv.addWeighted(image,3, np.zeros(image.shape, image.dtype), 0, 20)
+
+    def FindPossiblePlates(self, frame, usingBright):
 
         if frame.image is None:
             frame.arrayOfPlates = []
             return
 
-        # cv.imshow('inicial ' + frame.name, frame.image)
         arrayOfPlates = []
-        arrayOfAreas = []
-        arrayOfAreasCalculated = []
         arrayOfContours = []
         arrayOfShapes = []
 
@@ -73,61 +73,44 @@ class ImageProcessing:
             proportion = float(w) / h
 
             if proportion > 2.83 and proportion < 3.20:
-                area = cv.contourArea(currentContour)
-                arrayOfAreasCalculated.append(w * h)
-                arrayOfAreas.append(area)
-                #print(frame.name + " Area: " + str(area) + "; Proportion: " + str(proportion))
                 cv.putText(backtorgb, str(proportion), (x,y), cv.FONT_HERSHEY_SIMPLEX, 1, (255,255,0),2)
                 arrayOfContours.append(currentContour)
 
             # contorna as letras e números
             if proportion > 0.59 and proportion < 0.82:
                 cv.rectangle(backtorgb,(x,y),(x+w,y+h),(0,0,255),1)
-            
-        areaMedia = np.mean(arrayOfAreas)
-        areaMediaCalculada = np.mean(arrayOfAreasCalculated)
-        # print(str(areaMedia))
-        # print(str(areaMediaCalculada))
 
         for contour in arrayOfContours: 
-            areaFromContour = cv.contourArea(contour) * 1.4
 
-            if areaFromContour >= areaMedia:
-                x,y,w,h = cv.boundingRect(contour)
+            x,y,w,h = cv.boundingRect(contour)
 
-                possiblePlate = Frame(frame.originalImage[y:y+h, x:x+w], frame.name, None, None)        
-                height, width = possiblePlate.image.shape
+            possiblePlate = Frame(frame.originalImage[y:y+h, x:x+w], frame.name, None, None)        
+            height, width = possiblePlate.image.shape
 
-                # remove placas duplicadas
-                plateAlreadyExists = False
-                for shape in arrayOfShapes:
-                    if(shape[0] == height and shape[1] == width):
-                        plateAlreadyExists = True
+            # remove placas duplicadas
+            plateAlreadyExists = False
+            for shape in arrayOfShapes:
+                if(shape[0] == height and shape[1] == width):
+                    plateAlreadyExists = True
 
-                if plateAlreadyExists:
-                    continue
+            if plateAlreadyExists:
+                continue
 
-                if height < 38:
-                    cv.imwrite("../rejected/height40/" + possiblePlate._id + '.png', possiblePlate.image)
-                    continue
+            if height < 38:
+                cv.imwrite("../rejected/height40/" + possiblePlate._id + '.png', possiblePlate.image)
+                continue
 
-                calculatedArea = height * width
-                shape = height, width
-                arrayOfShapes.append(shape)
+            shape = height, width
+            arrayOfShapes.append(shape)
+            cv.drawContours(backtorgb, [contour], -1, (255,0,0), 2)
+            arrayOfPlates.append(possiblePlate)
 
-                if calculatedArea > 760:
-                    # cv.rectangle(backtorgb,(x,y),(x+w,y+h),(255,0,0),1)
-                    cv.drawContours(backtorgb, [contour], -1, (255,0,0), 2)
-                    arrayOfPlates.append(possiblePlate)
-                    # cv.imshow(str(uuid.uuid4()), possiblePlate.image)
-                else:
-                    cv.imwrite("../rejected/area760/" + self.name + possiblePlate._id + '.png', possiblePlate.image)
-            else:
-                cv.imwrite("../rejected/menorareamedia/" + str(uuid.uuid4()) + '.png', frame.originalImage[y:y+h, x:x+w])
-
+        listToRemove =[]
         i = 0
         for plate in arrayOfPlates:
             plateCopy = plate.image.copy()
+            if usingBright:
+                plateCopy = cv.addWeighted(plateCopy,2, np.zeros(plateCopy.shape, plateCopy.dtype), 0, 10)
             plateCopy = self.Billateral(plateCopy)
             plateCopy = self.Canny(plateCopy)
             findContournsImg, contoursPlate, hierarchy = cv.findContours(plateCopy.copy(), cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -140,24 +123,18 @@ class ImageProcessing:
                 x,y,w,h = cv.boundingRect(contour)
                 proportion = float(w) / h
                 if proportion > 0.57 and proportion < 0.82 and h > 11:
-                    areaFromContour = cv.contourArea(contour)
                     cv.rectangle(backtorgbplate,(x,y),(x+w,y+h),(0,0,255),1)
                     hasPlate = True
-            
+
             if hasPlate == False:
-                arrayOfPlates.pop(i - 1)
-                cv.imwrite("../rejected/letter/" + frame.name + possiblePlate._id + '.png', plate.image)
+                listToRemove.append(plate)
+                
             i = i + 1
-<<<<<<< HEAD
-            # cv.imshow('placa' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
+            cv.imshow('placa ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
+
+        for plate in listToRemove:
+            arrayOfPlates.remove(plate)
+            cv.imwrite("../rejected/letter/" + frame.name + possiblePlate._id + '.png', plate.image)
 
         frame.arrayOfPlates = arrayOfPlates
-        # cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
-=======
-            #cv.imshow('placa' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
-
-        frame.arrayOfPlates = arrayOfPlates
-        #cv.imshow('img com contornos media' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
-
-
->>>>>>> 194728e7baa8642f98c4a0f924301f1c9f053e58
+        cv.imshow('img com contornos ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
