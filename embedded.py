@@ -160,28 +160,32 @@ while(True):
         img.validateAmountOfWhiteAndBlackPixels()
 
         if len(img.arrayOfPlates) > 0:
-            log(str(len(img.arrayOfPlates)) + " possible plates found at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))
-            print(str(len(img.arrayOfPlates)) + " possible plates found at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))
+            log(str(len(img.arrayOfPlates)) + " possible plates found at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f') + " in frame " + str(img._id))
+            print(str(len(img.arrayOfPlates)) + " possible plates found at " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f') + " in frame " + str(img._id))
             for plate in img.arrayOfPlates:
                 cv.imwrite("../processed/" + str(img._id) + ".png", plate.image)
-                result = ocr.image_to_string(Image.fromarray(plate.image), config="--psm 8")
-                log("OCR finished processing for frame " + str(img._id) + ". Result: " + result + " - Time: " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))            
-                print("OCR result: " + result)                
-                placa = verificaPlaca.verificar(result)
-                log("VP result: " + str(placa))
-                print("VP result: " + str(placa))
-                if not placa == -1:          
-                    #api = ws.checkForPlateExistence(placa)
-                    #if api == True:
-                    #   open_gate(str(img._id),placa)
-                    #   break
-                    open_gate(str(img._id),placa)
-                else:
-                    gpio.output(16, gpio.HIGH)
-                    time.sleep(.250)
-                    gpio.output(16, gpio.LOW)
-                    print("Plate not recognized")
-                    log("Plate not recongnized")
+                try:
+                    result = ocr.image_to_string(Image.fromarray(plate.image), config="--psm 8")
+                    log("OCR finished processing for frame " + str(plate._id) + ". Result: " + result + " - Time: " + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f'))            
+                    print("OCR result: " + result)                
+                    placa = verificaPlaca.verificar(result)
+                    log("VP result: " + str(placa))
+                    print("VP result: " + str(placa))
+                    if not placa == -1:          
+                        #api = ws.checkForPlateExistence(placa)
+                        #if api == True:
+                        #   open_gate(str(plate._id),placa)
+                        #   break
+                        open_gate(str(plate._id),placa)
+                    else:
+                        gpio.output(16, gpio.HIGH)
+                        time.sleep(.250)
+                        gpio.output(16, gpio.LOW)
+                        print("Plate not recognized")
+                        log("Plate not recongnized")
+                except:
+                    log("Error: " + str(sys.exc_info()) + " when reading plate info from frame " + str(plate._id))
+                    print("Error: " + str(sys.exc_info()) + " when reading plate info from frame " + str(plate._id))
         else:
             log("Sorry, no plates were found in frame " + str(img._id))
             print("Sorry, no plates were found in frame " + str(img._id))

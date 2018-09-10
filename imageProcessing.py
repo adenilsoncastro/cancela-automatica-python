@@ -132,11 +132,11 @@ class ImageProcessing:
                 listToRemove.append(plate)
                 
             i = i + 1
-            cv.imshow('placa ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
+            #cv.imshow('placa ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
 
         for plate in listToRemove:
             arrayOfPlates.remove(plate)
             cv.imwrite("../rejected/letter/" + frame.name + possiblePlate._id + '.png', plate.image)
 
         frame.arrayOfPlates = arrayOfPlates
-        cv.imshow('img com contornos ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
+        #cv.imshow('img com contornos ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)

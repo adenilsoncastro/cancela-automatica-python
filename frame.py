@@ -94,7 +94,7 @@ class Frame:
 
             print('normal')
             white_normal, black_normal = self.showAmountOfColor(normal)
-            cv.imshow(self.name + "normal: " + str(i), normal)
+            #cv.imshow(self.name + "normal: " + str(i), normal)
             # print('adaptive')
             # white_adaptive, black_adaptive = self.showAmountOfColor(adaptive)
 
@@ -104,14 +104,14 @@ class Frame:
             if white_normal < 20:
                 print('muito escura')
                 _, plate.image = cv.threshold(plate.image.copy(), 35, 255, cv.THRESH_BINARY)
-                cv.imshow(self.name + "_lessThreshold_applied: " + str(i), plate.image)
+                #cv.imshow(self.name + "_lessThreshold_applied: " + str(i), plate.image)
                 return
 
             if white_normal > 70 :
                 print('muito escura')
                 ret, plate.image = cv.threshold(plate.image.copy(),0,255,cv.THRESH_BINARY+cv.THRESH_OTSU)
                 print('otsu applied: ' + plate.name)
-                cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
+                #cv.imshow(self.name + "_otsu_applied: " + str(i), plate.image)
                 return
             else:
                 plate.image = normal
