@@ -1,5 +1,6 @@
 import os
 from subprocess import call
+import v4l2 
 
 class Camera:
 	def __init__(self):
@@ -14,3 +15,6 @@ class Camera:
 			return 0
 		else:
 			return -1
+
+	def teste(self):
+		return 
