@@ -124,7 +124,7 @@ class ImageProcessing:
             for contour in contoursPlate:
                 x,y,w,h = cv.boundingRect(contour)
                 proportion = float(w) / h
-                if proportion > 0.57 and proportion < 0.82 and h > 11:
+                if proportion > 0.57 and proportion < 0.84 and h > 11:
                     cv.rectangle(backtorgbplate,(x,y),(x+w,y+h),(0,0,255),1)
                     hasPlate = True
 
@@ -132,11 +132,11 @@ class ImageProcessing:
                 listToRemove.append(plate)
                 
             i = i + 1
-            cv.imshow('placa ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
+            # cv.imshow('placa ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgbplate)
 
         for plate in listToRemove:
             arrayOfPlates.remove(plate)
             cv.imwrite("../rejected/letter/" + frame.name + possiblePlate._id + '.png', plate.image)
 
         frame.arrayOfPlates = arrayOfPlates
-        cv.imshow('img com contornos ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)
+        # cv.imshow('img com contornos ' + frame.name + " - " + str(uuid.uuid4()).split("-")[0], backtorgb)

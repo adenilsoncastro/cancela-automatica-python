@@ -135,13 +135,13 @@ class Frame:
     def CropPlateBorders(self, plate):
         y, x = plate.image.shape
 
-        y1New = int(np.ceil(y - y * 0.05))
-        x1New = int(np.ceil(x - x * 0.05))
+        # y1New = int(np.ceil(y - y * 0.04))
+        # x1New = int(np.ceil(x - x * 0.04))
 
-        y2New = int(np.ceil(y * 0.31))
-        x2New = int(np.ceil(x * 0.05))
+        y2New = int(np.ceil(y * 0.26))
+        x2New = int(np.ceil(x * 0.04))
 
-        plate.image = plate.image[y2New:y1New, x2New:x1New]
+        plate.image = plate.image[y2New:y, x2New:x]
         return plate
 
     def CropAllPlatesBorders(self):

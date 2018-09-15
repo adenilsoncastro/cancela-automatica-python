@@ -50,7 +50,7 @@ noite6 = cv.imread("../../images/noite6.png", cv.IMREAD_GRAYSCALE)
 noite7 = cv.imread("../../images/noite7.png", cv.IMREAD_GRAYSCALE)
 noite8 = cv.imread("../../images/noite8.png", cv.IMREAD_GRAYSCALE)
 
-# arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
+arrayOfCarsInitial = np.array([imgGol1, imgGol2, imgGol3, imgGol4, imgGol5, imgGol6, imgGol7, imgGol8, imgGol9, imgGol10])
 # arrayOfCarsInitial = np.array([imgGol2, imgGol3, imgGol4, imgGol5, imgGol7, imgGol9, imgGol10, imgGol11, imgGol12, imgGol13, imgGol14, imgGol15])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4,corsa1,corsa2,siena1, meriva1, peugeot1, hb201, imgGol14])
 # arrayOfCarsInitial = np.array([imgGol11,sandero1,sandero2, sandero3,sandero4])
@@ -69,7 +69,7 @@ for car in arrayOfCarsInitial:
     imgProcessing = ImageProcessing()
 
     img.CropImage()
-    cv.imshow('inicial crop' + img.name, img.image)
+    # cv.imshow('inicial crop' + img.name, img.image)
     img.image = imgProcessing.Billateral(img.image)
     img.image = imgProcessing.Canny(img.image)
 
@@ -91,7 +91,7 @@ for car in arrayOfCarsInitial:
         print('no plates found without more light ' + img.name)
         print('applying bright filter')
         img.image = imgProcessing.MoreLight(img.originalImage)
-        cv.imshow('light ' + img.name, img.image)
+        # cv.imshow('light ' + img.name, img.image)
         img.image = imgProcessing.Billateral(img.image)
         img.image = imgProcessing.Canny(img.image)
         imgProcessing.FindPossiblePlates(img, True, False)
