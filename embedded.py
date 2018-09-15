@@ -90,15 +90,22 @@ def update_screen(image):
             except:
                 log("Error: " + str(sys.exc_info()) + " when updating screen image")
 
-
 def log(text):
     with open("log.txt","a+") as file:
         file.write(text + "\n")
         file.close()
 
+def move_log():
+    try:
+        shutil.copyfile("log.txt", "logs/log_" + str(datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')) + ".txt")
+        os.remove("log.txt")
+    except:
+        print("Error: " + str(sys.exc_info()))
+
 imgProcessing = ImageProcessing()
 verificaPlaca = vp()
 gpio.add_event_detect(24, gpio.RISING, callback=handle_sensor, bouncetime=300) 
+move_log()
 
 while(True): 
     ret, frame = cap.read()
