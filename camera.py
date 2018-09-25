@@ -1,6 +1,6 @@
 import os
 from subprocess import call
-import v4l2 
+import subprocess
 
 class Camera:
 	def __init__(self):
@@ -16,5 +16,12 @@ class Camera:
 		else:
 			return -1
 
-	def teste(self):
-		return 
+	def findDevice(self):		
+		devices = subprocess.run(['v4l2-ctl', '--list-devices'], stdout=subprocess.PIPE)
+		return_string = str(devices)
+		splited = return_string.split("stdout=b")[1].split("\\n\\n")
+		if "HP" in splited[0]:
+			return 0
+
+		if "HP" in splited[1]:
+			return 1

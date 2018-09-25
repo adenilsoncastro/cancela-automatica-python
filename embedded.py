@@ -17,35 +17,83 @@ from verificaPlaca import VerificaPlaca as vp
 import platews as ws
 
 gpio.setmode(gpio.BCM)
-gpio.setup(21, gpio.OUT)#led
-gpio.setup(20, gpio.OUT)#led
-gpio.setup(16, gpio.OUT)#led
-gpio.setup(24, gpio.IN)#Sensor
+gpio.setup(21, gpio.OUT)#led azul / M1
+gpio.setup(20, gpio.OUT)#led ?
+gpio.setup(16, gpio.OUT)#led vermelho / M2
+gpio.setup(24, gpio.IN)#Sensor barreira
+gpio.setup(25, gpio.IN, pull_up_down = gpio.PUD_DOWN)#Fim de curso superior
+gpio.setup(8, gpio.IN, pull_up_down = gpio.PUD_DOWN)#Fim de curso inferior
 
 lcd = CharLCD(pin_rs=18, pin_e=23, pins_data=[26,19,13,6], numbering_mode=gpio.BCM, cols=16, rows=2)
 
-cap = cv.VideoCapture(0)
+cam = Camera()
+print("HP Camera is in /dev/video" + str(cam.findDevice()))
+cap = cv.VideoCapture(cam.findDevice())
 cap.set(3, 1080)
 cap.set(4, 720)
 count = 0
 
+if cam.findDevice() == 0:
+    os.popen('zbarcam /dev/video1 > qr_result.txt')
+else:
+    os.popen('zbarcam /dev/video0 > qr_result.txt')
+
 def image_name():
     return str(uuid.uuid4()).split('-')[0]
+
+def qrcode():
+    try:
+        file = open("qr_result.txt", "r+")
+
+        data = file.readlines()
+        if data == []:
+           print("No information available from QRCODE")
+        else:
+            result = data[0].split(":")
+            print("\n" + str(result[1]))
+            time.sleep(2)
+            file.truncate(0)
+
+        file.close()
+    except:
+        print("Error: " + str(sys.exc_info()) + " when reading qrcode info")  
 
 def open_gate(name,plate):
     cap.release()
     update_screen("correct")
+    #gpio.output(21, gpio.HIGH)
+    #time.sleep(.250)
+    #gpio.output(21, gpio.LOW)
+    #lcd.clear()
+    #lcd.cursor_pos=(0,0)
+    #lcd.write_string("Placa:")
+    #lcd.write_string(plate)
+    #lcd.cursor_pos=(1,0)
+    #lcd.write_string(name)
+    #time.sleep(5)
+    while gpio.input(25) == gpio.LOW:
+        gpio.output(21, gpio.HIGH)
+        print("Cancela abrindo...")
+    while gpio.input(25) == gpio.HIGH and gpio.input(24) == gpio.LOW:
+        gpio.output(21, gpio.HIGH)
+        time.sleep(.1)
+        gpio.output(21, gpio.LOW)
+        time.sleep(.1)
+        print("Cancela aberta, aguardando passagem do veículo!")
+    time.sleep(3)
+    while gpio.input(8) == gpio.LOW:
+        while gpio.input(8) == gpio.LOW and gpio.input(24) == gpio.LOW:
+            print("Cancela fechando")
+        while gpio.input(8) == gpio.LOW and gpio.input(24) == gpio.HIGH:
+            print("Obstáculo detectado!")
+    time.sleep(2)    
+    print("Cancela fechada!")    
     gpio.output(21, gpio.HIGH)
-    time.sleep(.250)
-    gpio.output(21, gpio.LOW)
-    lcd.clear()
-    lcd.cursor_pos=(0,0)
-    lcd.write_string("Placa:")
-    lcd.write_string(plate)
-    lcd.cursor_pos=(1,0)
-    lcd.write_string(name)
+    gpio.output(16, gpio.HIGH)
     time.sleep(5)
-    cap.open(0)
+    gpio.output(21, gpio.LOW)
+    gpio.output(16, gpio.LOW)
+    cap.open(cam.findDevice())
     cap.set(3, 1080)
     cap.set(4, 720)
 
@@ -104,7 +152,7 @@ def move_log():
 
 imgProcessing = ImageProcessing()
 verificaPlaca = vp()
-gpio.add_event_detect(24, gpio.RISING, callback=handle_sensor, bouncetime=300) 
+#gpio.add_event_detect(24, gpio.RISING, callback=handle_sensor, bouncetime=300) 
 move_log()
 
 while(True): 
@@ -203,9 +251,7 @@ while(True):
     else:
         print("Error reading frame!")
     
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        print("Total frames processed: " + str(count))
-        break
+    qrcode()
     
 cap.release()
 cv.destroyAllWindows()

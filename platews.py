@@ -17,4 +17,4 @@ def checkForPlateExistence(plate):
     
     return response
 
-#checkForPlateExistence('ABC-1234')
+#checkForPlateExistence('ABC1234')
