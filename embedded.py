@@ -51,9 +51,10 @@ def qrcode():
         else:
             result = data[0].split(":")
             print("QRCODE: \n" + str(result[1]) + "\n")
-            api = ws.checkForPlateExistence(result)
+            id = result[1].rstrip()
+            api = ws.checkForIdExistence(id)
             if api == True:
-                open_gate(str(plate._id),placa)
+                open_gate("qrcode",id)
             #open_gate(str(plate._id),placa)
             else:
                 update_screen("error")

@@ -20,12 +20,12 @@ def checkForPlateExistence(plate):
 def checkForIdExistence(id):
     url = 'http://ec2-54-218-220-67.us-west-2.compute.amazonaws.com:8080/qrcode/checkgeneratedid'
 
-    data = {'id': id}
+    data = {'generatedId': id}
     response = requests.post(url, data=data)
 
     obj = json.loads(response.text)
     print(obj['success'])
     
-    return response
+    return obj['success']
 
-#checkForIdExistence('ahsuhasihusa')
+checkForIdExistence('5babd7a9a9bfff0409ab0e77')
