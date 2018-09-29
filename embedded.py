@@ -17,9 +17,9 @@ from verificaPlaca import VerificaPlaca as vp
 import platews as ws
 
 gpio.setmode(gpio.BCM)
-gpio.setup(21, gpio.OUT)#led azul / M1
-gpio.setup(20, gpio.OUT)#led ?
-gpio.setup(16, gpio.OUT)#led vermelho / M2
+gpio.setup(21, gpio.OUT)#M1
+gpio.setup(20, gpio.OUT)#led
+gpio.setup(16, gpio.OUT)#M2
 gpio.setup(24, gpio.IN)#Sensor barreira
 gpio.setup(25, gpio.IN, pull_up_down = gpio.PUD_DOWN)#Fim de curso superior
 gpio.setup(8, gpio.IN, pull_up_down = gpio.PUD_DOWN)#Fim de curso inferior
@@ -50,10 +50,19 @@ def qrcode():
            print("No information available from QRCODE")
         else:
             result = data[0].split(":")
-            print("\n" + str(result[1]))
+            print("QRCODE: \n" + str(result[1]) + "\n")
+            api = ws.checkForPlateExistence(result)
+            if api == True:
+                open_gate(str(plate._id),placa)
+            #open_gate(str(plate._id),placa)
+            else:
+                update_screen("error")
+                print("Id não reconhecido!")
+                gpio.output(20, gpio.HIGH)
+                time.sleep(.250)
+                gpio.output(20, gpio.LOW)       
             time.sleep(2)
             file.truncate(0)
-
         file.close()
     except:
         print("Error: " + str(sys.exc_info()) + " when reading qrcode info")  
@@ -74,35 +83,34 @@ def open_gate(name,plate):
     while gpio.input(25) == gpio.LOW:
         gpio.output(21, gpio.HIGH)
         print("Cancela abrindo...")
+    gpio.output(21, gpio.LOW)
     while gpio.input(25) == gpio.HIGH and gpio.input(24) == gpio.LOW:
-        gpio.output(21, gpio.HIGH)
-        time.sleep(.1)
         gpio.output(21, gpio.LOW)
+        gpio.output(20, gpio.HIGH)
+        time.sleep(.1)
+        gpio.output(20, gpio.LOW)
         time.sleep(.1)
         print("Cancela aberta, aguardando passagem do veículo!")
     time.sleep(3)
     while gpio.input(8) == gpio.LOW:
         while gpio.input(8) == gpio.LOW and gpio.input(24) == gpio.LOW:
+            gpio.output(16, gpio.HIGH)
             print("Cancela fechando")
         while gpio.input(8) == gpio.LOW and gpio.input(24) == gpio.HIGH:
+            gpio.output(16, gpio.LOW)
             print("Obstáculo detectado!")
-    time.sleep(2)    
-    print("Cancela fechada!")    
-    gpio.output(21, gpio.HIGH)
-    gpio.output(16, gpio.HIGH)
-    time.sleep(5)
-    gpio.output(21, gpio.LOW)
     gpio.output(16, gpio.LOW)
+    time.sleep(2)  
+
+    print("Cancela fechada!")    
+    gpio.output(20, gpio.HIGH)    
+    time.sleep(5)
+    gpio.output(20, gpio.LOW)
+
+    gpio.output(21, gpio.LOW)
     cap.open(cam.findDevice())
     cap.set(3, 1080)
     cap.set(4, 720)
-
-def handle_sensor(channel):
-    lcd.clear()
-    lcd.cursor_pos=(0,0)
-    lcd.write_string("Interrupcao")
-    while gpio.input(24):
-        print("obstacle detected")
 
 def update_screen(image):
     path = "../cancela-automatica-interface/image/"
@@ -151,8 +159,7 @@ def move_log():
         print("Error: " + str(sys.exc_info()))
 
 imgProcessing = ImageProcessing()
-verificaPlaca = vp()
-#gpio.add_event_detect(24, gpio.RISING, callback=handle_sensor, bouncetime=300) 
+verificaPlaca = vp() 
 move_log()
 
 while(True): 
@@ -230,12 +237,14 @@ while(True):
                         #api = ws.checkForPlateExistence(placa)
                         #if api == True:
                         #   open_gate(str(plate._id),placa)
-                        #   break
+                        #else:
+                        #    update_screen("error")
                         open_gate(str(plate._id),placa)
                     else:
-                        gpio.output(16, gpio.HIGH)
+                        update_screen("error")
+                        gpio.output(20, gpio.HIGH)
                         time.sleep(.250)
-                        gpio.output(16, gpio.LOW)
+                        gpio.output(20, gpio.LOW)
                         print("Plate not recognized")
                         log("Plate not recongnized")
                 except:

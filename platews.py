@@ -17,4 +17,15 @@ def checkForPlateExistence(plate):
     
     return response
 
-#checkForPlateExistence('ABC1234')
+def checkForIdExistence(id):
+    url = 'http://ec2-54-218-220-67.us-west-2.compute.amazonaws.com:8080/qrcode/checkgeneratedid'
+
+    data = {'id': id}
+    response = requests.post(url, data=data)
+
+    obj = json.loads(response.text)
+    print(obj['success'])
+    
+    return response
+
+#checkForIdExistence('ahsuhasihusa')
