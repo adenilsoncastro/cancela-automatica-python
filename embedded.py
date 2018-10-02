@@ -81,24 +81,24 @@ def open_gate(name,plate):
     #lcd.write_string(name)
     #time.sleep(5)
     while gpio.input(25) == gpio.LOW:
-        gpio.output(21, gpio.HIGH)
+        gpio.output(21, gpio.HIGH)#M1
         print("Cancela abrindo...")
-    gpio.output(21, gpio.LOW)
+    gpio.output(21, gpio.LOW)#M1
     while gpio.input(25) == gpio.HIGH and gpio.input(24) == gpio.LOW:
-        gpio.output(21, gpio.LOW)
-        gpio.output(20, gpio.HIGH)
+        gpio.output(21, gpio.LOW)#M1
+        gpio.output(20, gpio.HIGH)#LED
         time.sleep(.1)
         gpio.output(20, gpio.LOW)
         time.sleep(.1)
         print("Cancela aberta, aguardando passagem do veículo!")
-    time.sleep(3)
-    while gpio.input(8) == gpio.LOW:
+    time.sleep(5)
+    while gpio.input(8) == gpio.LOW:#fim de curso inferior
         while gpio.input(8) == gpio.LOW and gpio.input(24) == gpio.LOW:
             gpio.output(16, gpio.HIGH)
-            print("Cancela fechando")
+            print("Cancela fechando")            
         while gpio.input(8) == gpio.LOW and gpio.input(24) == gpio.HIGH:
             gpio.output(16, gpio.LOW)
-            print("Obstáculo detectado!")
+            print("Obstáculo detectado!")            
     gpio.output(16, gpio.LOW)
     time.sleep(2)  
 
@@ -234,19 +234,20 @@ while(True):
                     log("VP result: " + str(placa))
                     print("VP result: " + str(placa))
                     if not placa == -1:          
-                        #api = ws.checkForPlateExistence(placa)
-                        #if api == True:
-                        #   open_gate(str(plate._id),placa)
-                        #else:
-                        #    update_screen("error")
-                        open_gate(str(plate._id),placa)
+                        api = ws.checkForPlateExistence(placa)
+                        if api == True:
+                           open_gate(str(plate._id),placa)   
+                           break                        
+                        else:
+                            update_screen("error")
+                        #open_gate(str(plate._id),placa)
                     else:
                         update_screen("error")
                         gpio.output(20, gpio.HIGH)
                         time.sleep(.250)
                         gpio.output(20, gpio.LOW)
                         print("Plate not recognized")
-                        log("Plate not recongnized")
+                        log("Plate not recongnized")                    
                 except:
                     log("Error: " + str(sys.exc_info()) + " when reading plate info from frame " + str(plate._id))
                     print("Error: " + str(sys.exc_info()) + " when reading plate info from frame " + str(plate._id))

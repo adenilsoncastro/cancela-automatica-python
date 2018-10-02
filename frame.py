@@ -101,7 +101,7 @@ class Frame:
             # print('otsu')
             # white_otsu, black_otsu = self.showAmountOfColor(otsu)
 
-            if white_normal < 20:
+            if white_normal < 25:
                 print('muito escura')
                 _, plate.image = cv.threshold(plate.image.copy(), 35, 255, cv.THRESH_BINARY)
                 #cv.imshow(self.name + "_lessThreshold_applied: " + str(i), plate.image)
