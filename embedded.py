@@ -47,17 +47,20 @@ def qrcode():
 
         data = file.readlines()
         if data == []:
-           print("No information available from QRCODE")
+           print("No information available from QRCODE")           
         else:
             result = data[0].split(":")
             print("QRCODE: \n" + str(result[1]) + "\n")
+            log("QRCODE: \n" + str(result[1]) + "\n")
             id = result[1].rstrip()
             api = ws.checkForIdExistence(id)
             if api == True:
+                log("API returned true")
                 open_gate("qrcode",id)
             #open_gate(str(plate._id),placa)
             else:
                 update_screen("error")
+                log("API returned false")
                 print("Id não reconhecido!")
                 gpio.output(20, gpio.HIGH)
                 time.sleep(.250)
@@ -67,8 +70,10 @@ def qrcode():
         file.close()
     except:
         print("Error: " + str(sys.exc_info()) + " when reading qrcode info")  
+        log("Error: " + str(sys.exc_info()) + " when reading qrcode info")  
 
 def open_gate(name,plate):
+    log("Iniciando processo de abertura da cancela!")
     cap.release()
     update_screen("correct")
     #gpio.output(21, gpio.HIGH)
@@ -103,7 +108,8 @@ def open_gate(name,plate):
     gpio.output(16, gpio.LOW)
     time.sleep(2)  
 
-    print("Cancela fechada!")    
+    print("Cancela fechada!")
+    log("Cancela fechada!")   
     gpio.output(20, gpio.HIGH)    
     time.sleep(5)
     gpio.output(20, gpio.LOW)
@@ -157,6 +163,7 @@ def move_log():
         shutil.copyfile("log.txt", "logs/log_" + str(datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S:%f')) + ".txt")
         os.remove("log.txt")
     except:
+        log("Error: " + str(sys.exc_info()))
         print("Error: " + str(sys.exc_info()))
 
 imgProcessing = ImageProcessing()
@@ -237,9 +244,11 @@ while(True):
                     if not placa == -1:          
                         api = ws.checkForPlateExistence(placa)
                         if api == True:
-                           open_gate(str(plate._id),placa)   
-                           break                        
+                            log("API returned true!")
+                            open_gate(str(plate._id),placa)   
+                            break                        
                         else:
+                            log("API returned false")
                             update_screen("error")
                         #open_gate(str(plate._id),placa)
                     else:
